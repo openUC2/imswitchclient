@@ -1,7 +1,6 @@
 #%%
 import imswitchclient.ImSwitchClient as imc
 
-
 # Instantiate the ImSwitchClient
 client = imc.ImSwitchClient()
 #%%
@@ -22,8 +21,11 @@ print("Move Positioner Response:", response)
 
 #%%
 # Test the snap_numpy_to_fastapi method
+import matplotlib.pyplot as plt
 image_array = client.snap_numpy_to_fastapi()
 print("Image Array Shape:", image_array.shape)
+plt.imshow(image_array), plt.show()
 
 
 
+# %%

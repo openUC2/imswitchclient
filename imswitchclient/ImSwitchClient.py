@@ -5,7 +5,6 @@ import io
 import PIL.Image
 import numpy as np
 import logging
-import zeroconf
 import os
 
 
