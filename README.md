@@ -27,13 +27,26 @@ pip install imswitchclient
 
 ```python
 #%%
-import imswitchclient.ImSwitchClient as imc
+#%%
+import imswitchclient.ImSwitchClient as imc 
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+
+stageName=None
+scanMax=100
+scanMin=-100
+scanStep = 50
+rescalingFac=10.0
+gridScan=True
+
 
 # Instantiate the ImSwitchClient
 client = imc.ImSwitchClient()
 #%%
 # Test the get_positioner_names method
-positioner_names = client.get_positioner_names()
+positioner_names = client.positionersManager.getAllDeviceNames()
 print("Positioner Names:", positioner_names)
 #%%
 #
@@ -44,12 +57,12 @@ dist = 1000
 is_absolute = True
 is_blocking = False
 
-response = client.move_positioner(positioner_name, axis, dist, is_absolute, is_blocking)
+response = client.positionersManager.movePositioner(positioner_name, axis, dist, is_absolute, is_blocking)
 print("Move Positioner Response:", response)
 
 #%%
 # Test the snap_numpy_to_fastapi method
-image_array = client.snap_numpy_to_fastapi()
+image_array = client.recordingManager.snapNumpyToFastAPI()
 print("Image Array Shape:", image_array.shape)
 ```
 
