@@ -10,11 +10,12 @@ class recordingManager(object):
     def __init__(self, parent):
         self.parent = parent
         
-    def snapNumpyToFastAPI(self):        
+    def snapNumpyToFastAPI(self, resizeFactor=1):        
         url = f"{self.parent.base_uri}/RecordingController/snapNumpyToFastAPI"
         headers = {'accept': 'application/json'}
-
-        response = requests.get(url, headers=headers)
+        payload ={'resizeFactor':resizeFactor}
+        # we do not use parent's get function here
+        response = requests.get(url, params=payload, headers=headers)
         response.raise_for_status()
         content_type = response.headers.get('content-type')
         if content_type == 'image/png':
