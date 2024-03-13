@@ -12,10 +12,12 @@ from .recordingManager import recordingManager
 
 
 class ImSwitchClient(object):
-    def __init__(self, host="localhost", port=8000):
+    def __init__(self, host="0.0.0.0", isHttps=True, port=8001):
         self.host = host
         self.port = port
+        self.isHttps = isHttps
         self.get_json(self.base_uri+"/openapi.json")
+        
         logging.info(f"Connecting to microscope {self.host}:{self.port}")
         
         # register managers
@@ -24,13 +26,16 @@ class ImSwitchClient(object):
         
     @property
     def base_uri(self):
-        return f"http://{self.host}:{self.port}"
+        if self.isHttps:
+            return f"https://{self.host}:{self.port}"
+        else:
+            return f"http://{self.host}:{self.port}"
 
     def get_json(self, path, payload={}, headers={}):
         """Perform an HTTP GET request and return the JSON response"""
         if not path.startswith("http"):
             path = self.base_uri + path
-        r = requests.get(path, params=payload, headers=headers)
+        r = requests.get(path, params=payload, headers=headers, verify=False)
         r.raise_for_status()
         return r.json()
 
@@ -38,7 +43,7 @@ class ImSwitchClient(object):
         """Make an HTTP POST request and return the JSON response"""
         if not path.startswith("http"):
             path = self.base_uri + path
-        r = requests.post(path, json=payload, headers=headers)
+        r = requests.post(path, json=payload, headers=headers, verify=False)
         r.raise_for_status()
         r = r.json()
         return r

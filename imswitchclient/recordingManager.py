@@ -15,7 +15,7 @@ class recordingManager(object):
         headers = {'accept': 'application/json'}
         payload ={'resizeFactor':resizeFactor}
         # we do not use parent's get function here
-        response = requests.get(url, params=payload, headers=headers)
+        response = requests.get(url, params=payload, headers=headers, verify=False)
         response.raise_for_status()
         content_type = response.headers.get('content-type')
         if content_type == 'image/png':
