@@ -1,4 +1,3 @@
-The provided reStructuredText (rst) content converted to Markdown (md) format is as follows:
 
 # ImSwitchClient
 
