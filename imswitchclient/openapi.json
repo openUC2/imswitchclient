@@ -1,0 +1,1410 @@
+{
+    "openapi": "3.1.0",
+    "info": { "title": "FastAPI", "version": "0.1.0" },
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Createapi",
+                "operationId": "createAPI__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "title": "Self" },
+                        "name": "self",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/changeScanPower": {
+            "get": {
+                "summary": "Changescanpower",
+                "operationId": "changeScanPower_LaserController_changeScanPower_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "title": "Lasername" },
+                        "name": "laserName",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": { "title": "Laservalue" },
+                        "name": "laserValue",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/getLaserNames": {
+            "get": {
+                "summary": "Getlasernames",
+                "description": "Returns the device names of all lasers. These device names can be\npassed to other laser-related functions.",
+                "operationId": "getLaserNames_LaserController_getLaserNames_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": { "type": "string" },
+                                    "type": "array",
+                                    "title": "Response Getlasernames Lasercontroller Getlasernames Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/post_json": {
+            "get": {
+                "summary": "Post Json",
+                "description": "Sends the specified command to the RS232 device and returns a\nstring encoded from the received bytes.",
+                "operationId": "post_json_LaserController_post_json_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Path" },
+                        "name": "path",
+                        "in": "query"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "type": "object", "title": "Payload" }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "title": "Response Post Json Lasercontroller Post Json Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/sendTrigger": {
+            "get": {
+                "summary": "Sendtrigger",
+                "description": "Sends a trigger puls through external device",
+                "operationId": "sendTrigger_LaserController_sendTrigger_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "integer", "title": "Triggerid" },
+                        "name": "triggerId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/send_serial": {
+            "get": {
+                "summary": "Send Serial",
+                "description": "Sends the specified command to the RS232 device and returns a\nstring encoded from the received bytes.",
+                "operationId": "send_serial_LaserController_send_serial_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Payload" },
+                        "name": "payload",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "title": "Response Send Serial Lasercontroller Send Serial Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/setLaserActive": {
+            "get": {
+                "summary": "Setlaseractive",
+                "description": "Sets whether the specified laser is powered on.",
+                "operationId": "setLaserActive_LaserController_setLaserActive_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Lasername" },
+                        "name": "laserName",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": { "type": "boolean", "title": "Active" },
+                        "name": "active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LaserController/setLaserValue": {
+            "get": {
+                "summary": "Setlaservalue",
+                "description": "Sets the value of the specified laser, in the units that the laser\nuses.",
+                "operationId": "setLaserValue_LaserController_setLaserValue_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Lasername" },
+                        "name": "laserName",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "anyOf": [
+                                { "type": "integer" },
+                                { "type": "number" }
+                            ],
+                            "title": "Value"
+                        },
+                        "name": "value",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ObjectiveRevolverController/calibrateObjective": {
+            "get": {
+                "summary": "Calibrateobjective",
+                "operationId": "calibrateObjective_ObjectiveRevolverController_calibrateObjective_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/ObjectiveRevolverController/getCurrentObjective": {
+            "get": {
+                "summary": "Getcurrentobjective",
+                "operationId": "getCurrentObjective_ObjectiveRevolverController_getCurrentObjective_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/ObjectiveRevolverController/moveToObjectiveID": {
+            "get": {
+                "summary": "Movetoobjectiveid",
+                "operationId": "moveToObjectiveID_ObjectiveRevolverController_moveToObjectiveID_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "title": "Objectiveid" },
+                        "name": "objectiveID",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": { "title": "Posobjective1" },
+                        "name": "posObjective1",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": { "title": "Posobjective2" },
+                        "name": "posObjective2",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LEDMatrixController/setAllLED": {
+            "get": {
+                "summary": "Setallled",
+                "operationId": "setAllLED_LEDMatrixController_setAllLED_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": { "title": "State" },
+                        "name": "state",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": { "title": "Intensity" },
+                        "name": "intensity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LEDMatrixController/setAllLEDOff": {
+            "get": {
+                "summary": "Setallledoff",
+                "operationId": "setAllLEDOff_LEDMatrixController_setAllLEDOff_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/LEDMatrixController/setAllLEDOn": {
+            "get": {
+                "summary": "Setallledon",
+                "operationId": "setAllLEDOn_LEDMatrixController_setAllLEDOn_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/LEDMatrixController/setIntensity": {
+            "get": {
+                "summary": "Setintensity",
+                "operationId": "setIntensity_LEDMatrixController_setIntensity_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": { "title": "Intensity" },
+                        "name": "intensity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LEDMatrixController/setLED": {
+            "get": {
+                "summary": "Setled",
+                "operationId": "setLED_LEDMatrixController_setLED_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "title": "Ledid" },
+                        "name": "LEDid",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": { "title": "State" },
+                        "name": "state",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LEDMatrixController/setSpecial": {
+            "get": {
+                "summary": "Setspecial",
+                "operationId": "setSpecial_LEDMatrixController_setSpecial_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "title": "Pattern" },
+                        "name": "pattern",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": { "title": "Intensity", "default": 255 },
+                        "name": "intensity",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": { "title": "Getreturn", "default": false },
+                        "name": "getReturn",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/SettingsController/getDetectorNames": {
+            "get": {
+                "summary": "Getdetectornames",
+                "description": "Returns the device names of all detectors. These device names can\nbe passed to other detector-related functions.",
+                "operationId": "getDetectorNames_SettingsController_getDetectorNames_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": { "type": "string" },
+                                    "type": "array",
+                                    "title": "Response Getdetectornames Settingscontroller Getdetectornames Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/SettingsController/setDetectorBinning": {
+            "get": {
+                "summary": "Setdetectorbinning",
+                "description": "Sets binning value for the specified detector.",
+                "operationId": "setDetectorBinning_SettingsController_setDetectorBinning_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Detectorname" },
+                        "name": "detectorName",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": { "type": "integer", "title": "Binning" },
+                        "name": "binning",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/SettingsController/setDetectorExposureTime": {
+            "get": {
+                "summary": "Setdetectorexposuretime",
+                "description": "Sets the exposure time for the specified detector.",
+                "operationId": "setDetectorExposureTime_SettingsController_setDetectorExposureTime_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": { "type": "string", "title": "Detectorname" },
+                        "name": "detectorName",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "title": "Exposuretime",
+                            "default": 1
+                        },
+                        "name": "exposureTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/SettingsController/setDetectorGain": {
+            "get": {
+                "summary": "Setdetectorgain",
+                "description": "Sets the gain for the specified detector.",
+                "operationId": "setDetectorGain_SettingsController_setDetectorGain_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": { "type": "string", "title": "Detectorname" },
+                        "name": "detectorName",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "title": "Gain",
+                            "default": 0
+                        },
+                        "name": "gain",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/SettingsController/setDetectorParameter": {
+            "get": {
+                "summary": "Setdetectorparameter",
+                "description": "Sets the specified detector-specific parameter to the specified\nvalue.",
+                "operationId": "setDetectorParameter_SettingsController_setDetectorParameter_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Detectorname" },
+                        "name": "detectorName",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Parametername"
+                        },
+                        "name": "parameterName",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": { "title": "Value" },
+                        "name": "value",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/SettingsController/setDetectorROI": {
+            "get": {
+                "summary": "Setdetectorroi",
+                "description": "Sets the ROI for the specified detector. frameStart is a tuple\n(x0, y0) and shape is a tuple (width, height).",
+                "operationId": "setDetectorROI_SettingsController_setDetectorROI_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Detectorname" },
+                        "name": "detectorName",
+                        "in": "query"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_setDetectorROI_SettingsController_setDetectorROI_get"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ViewController/setLiveViewActive": {
+            "get": {
+                "summary": "Setliveviewactive",
+                "description": "Sets whether the LiveView is active and updating.",
+                "operationId": "setLiveViewActive_ViewController_setLiveViewActive_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "boolean", "title": "Active" },
+                        "name": "active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ViewController/setLiveViewCrosshairVisible": {
+            "get": {
+                "summary": "Setliveviewcrosshairvisible",
+                "description": "Sets whether the LiveView crosshair is visible.",
+                "operationId": "setLiveViewCrosshairVisible_ViewController_setLiveViewCrosshairVisible_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "boolean", "title": "Visible" },
+                        "name": "visible",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ViewController/setLiveViewGridVisible": {
+            "get": {
+                "summary": "Setliveviewgridvisible",
+                "description": "Sets whether the LiveView grid is visible.",
+                "operationId": "setLiveViewGridVisible_ViewController_setLiveViewGridVisible_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "boolean", "title": "Visible" },
+                        "name": "visible",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/executeFunction": {
+            "get": {
+                "summary": "Executefunction",
+                "operationId": "executeFunction_RecordingController_executeFunction_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Code" },
+                        "name": "code",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/getVariable": {
+            "get": {
+                "summary": "Getvariable",
+                "operationId": "getVariable_RecordingController_getVariable_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Variable Name"
+                        },
+                        "name": "variable_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setDetectorToRecord": {
+            "get": {
+                "summary": "Setdetectortorecord",
+                "description": "Sets which detectors to record. One can also pass -1 as the\nargument to record the current detector, or -2 to record all detectors.",
+                "operationId": "setDetectorToRecord_RecordingController_setDetectorToRecord_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "title": "Multidetectorsinglefile",
+                            "default": false
+                        },
+                        "name": "multiDetectorSingleFile",
+                        "in": "query"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "anyOf": [
+                                    {
+                                        "items": { "type": "string" },
+                                        "type": "array"
+                                    },
+                                    { "type": "string" },
+                                    { "type": "integer" }
+                                ],
+                                "title": "Detectorname"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecFilename": {
+            "get": {
+                "summary": "Setrecfilename",
+                "description": "Sets the name of the file to record to. This only sets the name of\nthe file, not the full path. One can also pass None as the argument to\nuse a default time-based filename.",
+                "operationId": "setRecFilename_RecordingController_setRecFilename_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Filename" },
+                        "name": "filename",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecFolder": {
+            "get": {
+                "summary": "Setrecfolder",
+                "description": "Sets the folder to save recordings into.",
+                "operationId": "setRecFolder_RecordingController_setRecFolder_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "string", "title": "Folderpath" },
+                        "name": "folderPath",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecModeScanOnce": {
+            "get": {
+                "summary": "Setrecmodescanonce",
+                "description": "Sets the recording mode to record a single scan.",
+                "operationId": "setRecModeScanOnce_RecordingController_setRecModeScanOnce_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecModeScanTimelapse": {
+            "get": {
+                "summary": "Setrecmodescantimelapse",
+                "description": "Sets the recording mode to record a timelapse of scans.",
+                "operationId": "setRecModeScanTimelapse_RecordingController_setRecModeScanTimelapse_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "integer", "title": "Lapsestorec" },
+                        "name": "lapsesToRec",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": { "type": "number", "title": "Freqseconds" },
+                        "name": "freqSeconds",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "title": "Timelapsesinglefile",
+                            "default": false
+                        },
+                        "name": "timelapseSingleFile",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecModeSpecFrames": {
+            "get": {
+                "summary": "Setrecmodespecframes",
+                "description": "Sets the recording mode to record a specific number of frames.",
+                "operationId": "setRecModeSpecFrames_RecordingController_setRecModeSpecFrames_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": { "type": "integer", "title": "Numframes" },
+                        "name": "numFrames",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecModeSpecTime": {
+            "get": {
+                "summary": "Setrecmodespectime",
+                "description": "Sets the recording mode to record for a specific amount of time.",
+                "operationId": "setRecModeSpecTime_RecordingController_setRecModeSpecTime_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "anyOf": [
+                                { "type": "integer" },
+                                { "type": "number" }
+                            ],
+                            "title": "Secondstorec"
+                        },
+                        "name": "secondsToRec",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/setRecModeUntilStop": {
+            "get": {
+                "summary": "Setrecmodeuntilstop",
+                "description": "Sets the recording mode to record until recording is manually\nstopped.",
+                "operationId": "setRecModeUntilStop_RecordingController_setRecModeUntilStop_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/RecordingController/snapImage": {
+            "get": {
+                "summary": "Snapimage",
+                "description": "Take a snap and save it to a .tiff file at the set file path. \noutput: if True, return the numpy array of the image as a list if toList is True, or as a numpy array if toList is False\ntoList: if True, return the numpy array of the image as a list, otherwise return it as a numpy array",
+                "operationId": "snapImage_RecordingController_snapImage_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "title": "Output",
+                            "default": false
+                        },
+                        "name": "output",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "title": "Tolist",
+                            "default": true
+                        },
+                        "name": "toList",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {},
+                                    "type": "array",
+                                    "title": "Response Snapimage Recordingcontroller Snapimage Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/snapImageToPath": {
+            "get": {
+                "summary": "Snapimagetopath",
+                "description": "Take a snap and save it to a .tiff file at the given fileName.",
+                "operationId": "snapImageToPath_RecordingController_snapImageToPath_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Filename",
+                            "default": "."
+                        },
+                        "name": "fileName",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/snapNumpyToFastAPI": {
+            "get": {
+                "summary": "Snapnumpytofastapi",
+                "description": "Taking a snap and return it as a FastAPI Response object.\ndetectorName: the name of the detector to take the snap from. If None, take the snap from the first detector.\nresizeFactor: the factor by which to resize the image. If <1, the image will be downscaled, if >1, nothing will happen.",
+                "operationId": "snapNumpyToFastAPI_RecordingController_snapNumpyToFastAPI_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": { "type": "string", "title": "Detectorname" },
+                        "name": "detectorName",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "title": "Resizefactor",
+                            "default": 1
+                        },
+                        "name": "resizeFactor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/RecordingController/startRecording": {
+            "get": {
+                "summary": "Startrecording",
+                "description": "Starts recording with the set settings to the set file path.",
+                "operationId": "startRecording_RecordingController_startRecording_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/RecordingController/stopRecording": {
+            "get": {
+                "summary": "Stoprecording",
+                "description": "Stops recording.",
+                "operationId": "stopRecording_RecordingController_stopRecording_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/RecordingController/video_feeder": {
+            "get": {
+                "summary": "Video Feeder",
+                "description": "return a generator that converts frames into jpeg's reads to stream",
+                "operationId": "video_feeder_RecordingController_video_feeder_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/CommunicationChannel/acquireImage": {
+            "get": {
+                "summary": "Acquireimage",
+                "operationId": "acquireImage_CommunicationChannel_acquireImage_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        },
+        "/CommunicationChannel/get_image": {
+            "get": {
+                "summary": "Get Image",
+                "operationId": "get_image_CommunicationChannel_get_image_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": { "application/json": { "schema": {} } }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Body_setDetectorROI_SettingsController_setDetectorROI_get": {
+                "properties": {
+                    "frameStart": {
+                        "items": [{ "type": "integer" }, { "type": "integer" }],
+                        "type": "array",
+                        "maxItems": 2,
+                        "minItems": 2,
+                        "title": "Framestart"
+                    },
+                    "shape": {
+                        "items": [{ "type": "integer" }, { "type": "integer" }],
+                        "type": "array",
+                        "maxItems": 2,
+                        "minItems": 2,
+                        "title": "Shape"
+                    }
+                },
+                "type": "object",
+                "required": ["frameStart", "shape"],
+                "title": "Body_setDetectorROI_SettingsController_setDetectorROI_get"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                { "type": "string" },
+                                { "type": "integer" }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": { "type": "string", "title": "Message" },
+                    "type": { "type": "string", "title": "Error Type" }
+                },
+                "type": "object",
+                "required": ["loc", "msg", "type"],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

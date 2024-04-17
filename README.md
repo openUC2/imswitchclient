@@ -1,70 +1,73 @@
+# ImSwitchClient Documentation
 
-# ImSwitchClient
+`ImSwitchClient` is a Python package designed to connect to the ImSwitch REST API, enabling remote control of ImSwitchUC2 functionalities directly from Jupyter Notebooks. This client facilitates easy integration with the ImSwitch ecosystem, offering programmable access to various features like laser control, stage manipulation, and image acquisition.
 
 [![PyPI Version](https://img.shields.io/pypi/v/imswitchclient.svg)](https://pypi.python.org/pypi/imswitchclient)
-[![Build Status](https://img.shields.io/travis/beniroquai/imswitchclient.svg)](https://travis-ci.com/beniroquai/imswitchclient)
-[![Documentation Status](https://readthedocs.org/projects/imswitchclient/badge/?version=latest)](https://imswitchclient.readthedocs.io/en/latest/?version=latest)
-[![Updates](https://pyup.io/repos/github/beniroquai/imswitchclient/shield.svg)](https://pyup.io/repos/github/beniroquai/imswitchclient/)
 
-This is a package that connects ImSwitch's REST API to the rest of the world (e.g. jupyter lab)
+## Features
 
-- Free software: MIT license
-- Documentation: [https://imswitchclient.readthedocs.io](https://imswitchclient.readthedocs.io).
+- **Remote Control**: Interact with ImSwitchUC2 from Jupyter Notebooks via fastapi endpoints.
+- **Comprehensive Documentation**: Access detailed documentation and explore API endpoints at [https://imswitchclient.readthedocs.io](https://imswitchclient.readthedocs.io).
+- **API Exploration**: Utilize FastAPI's interface at http://localhost:8000/docs for an interactive API experience.
+- **Broad Functionality**: Current implementations include laser control, stage manipulation, and image acquisition, with the possibility for future expansion based on user requests.
+- **Global API Testing**: Test the client using the globally hosted API at [https://youseetoo.github.io/imswitch/api.html](https://youseetoo.github.io/imswitch/api.html).
+- **Open Source**: Inspired by the OpenFlexure Client, `ImSwitchClient` is freely available for modification and distribution under the MIT license.
+- **Implemented functions** (so far, please file an issue for feature requests):
+  - Laser
+  - Stage
+  - Image Acquisition
+- You can test the client with the globally hosted api here: https://youseetoo.github.io/imswitch/api.html
+- It is inspired by the OpenFlexure Client: https://gitlab.com/openflexure/openflexure-microscope-pyclient/-/blob/master/openflexure_microscope_client/microscope_client.py
+- The source files can be found here: https://github.com/openUC2/imswitchclient/
 
-## Install
+## Installation
+
+To install `ImSwitchClient`, use the following pip command:
 
 ```bash
 pip install imswitchclient
 ```
 
-## Features
+## Quick Start Example
 
-- remote control ImSwitchUC2 from the Jupyter Notebook with the fastapi endpoints
-- access fastapi on http://localhost:8000/docs
-
-## Example
+This example demonstrates basic usage of `ImSwitchClient` for moving a positioner and acquiring an image.
 
 ```python
-#%%
-#%%
 import imswitchclient.ImSwitchClient as imc 
 import numpy as np
 import matplotlib.pyplot as plt
-import cv2
+import time
 
-
-stageName=None
-scanMax=100
-scanMin=-100
-scanStep = 50
-rescalingFac=10.0
-gridScan=True
-
-
-# Instantiate the ImSwitchClient
+# Initialize the client
 client = imc.ImSwitchClient()
-#%%
-# Test the get_positioner_names method
+
+# Retrieve the first positioner's name and current position
 positioner_names = client.positionersManager.getAllDeviceNames()
-print("Positioner Names:", positioner_names)
-#%%
-#
-# Test the move_positioner method
 positioner_name = positioner_names[0]
-axis = "X"
-dist = 1000
-is_absolute = True
-is_blocking = False
+currentPositions = client.positionersManager.getPositionerPositions()[positioner_name]
+initialPosition = (currentPositions["X"], currentPositions["Y"])
 
-response = client.positionersManager.movePositioner(positioner_name, axis, dist, is_absolute, is_blocking)
-print("Move Positioner Response:", response)
+# Define and move to a new position
+newPosition = (initialPosition[0] + 10, initialPosition[1] + 10)
+client.positionersManager.movePositioner(positioner_name, "X", newPosition[0], is_absolute=True, is_blocking=True)
+client.positionersManager.movePositioner(positioner_name, "Y", newPosition[1], is_absolute=True, is_blocking=True)
 
-#%%
-# Test the snap_numpy_to_fastapi method
-image_array = client.recordingManager.snapNumpyToFastAPI()
-print("Image Array Shape:", image_array.shape)
+# Acquire and display an image
+time.sleep(0.5)  # Allow time for the move
+lastFrame = client.recordingManager.snapNumpyToFastAPI()
+plt.imshow(lastFrame)
+plt.show()
+
+# Return the positioner to its initial position
+client.positionersManager.movePositioner(positioner_name, "X", initialPosition[0], is_absolute=True, is_blocking=True)
+client.positionersManager.movePositioner(positioner_name, "Y", initialPosition[1], is_absolute=True, is_blocking=True)
 ```
 
-## Credits
+## Contributing
 
-This package was created with Cookiecutter and the [audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage) project template.
+Contributions to `ImSwitchClient` are welcome! Please refer to the project's GitHub repository for contribution guidelines: [https://github.com/openUC2/imswitchclient/](https://github.com/openUC2/imswitchclient/).
+
+## License
+
+`ImSwitchClient` is licensed under the MIT License. For more details, see the LICENSE file in the project repository.
+
