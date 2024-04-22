@@ -8,6 +8,8 @@ import logging
 import zeroconf
 import os
 
+import urllib3
+urllib3.disable_warnings()
 
 class ImSwitchClient(object):
     def __init__(self, host="localhost", port=8000):

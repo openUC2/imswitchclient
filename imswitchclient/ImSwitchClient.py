@@ -9,6 +9,7 @@ import os
 
 from .positionersManager import positionersManager
 from .recordingManager import recordingManager
+from .lasersManager import lasersManager
 
 
 class ImSwitchClient(object):
@@ -23,6 +24,7 @@ class ImSwitchClient(object):
         # register managers
         self.positionersManager = positionersManager(self)
         self.recordingManager = recordingManager(self)
+        self.lasersManager = lasersManager(self)
         
     @property
     def base_uri(self):
