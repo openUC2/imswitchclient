@@ -15,7 +15,8 @@ gridScan=True
 pixelSize = 1.0
 
 # Instantiate the ImSwitchClient
-client = imc.ImSwitchClient()
+client = imc.ImSwitchClient(port=8002, isHttps=False)
+client.positionersManager.movePositioner("ESP32Stage", "XY", (10,10), is_absolute=True, is_blocking=True)
 #%%
 # Test the get_positioner_names method
 positioner_names = client.positionersManager.getAllDeviceNames()

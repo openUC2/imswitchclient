@@ -2,7 +2,9 @@
 import imswitchclient.ImSwitchClient as imc
 
 # Instantiate the ImSwitchClient
-client = imc.ImSwitchClient()
+#client = imc.ImSwitchClient()
+client = imc.ImSwitchClient(host="localhost", isHttps=False, port=8002) 
+
 #%%
 # Test the get_positioner_names method
 positioner_names = client.get_positioner_names()
