@@ -43,7 +43,7 @@ pixelSize = 0.3 # µm
 mumPerStep = 0.3 # µm
 calibFilePath = "calibFile.json"
 csm_extension = OFMStageScanClass(client, calibration_file_path=calibFilePath, effPixelsize=pixelSize, stageStepSize=mumPerStep)
-mData = csm_extension.calibrate_xy(return_backlash_data=1)
+mData = csm_extension.calibrate_xy(return_backlash_data=0 )
 
 if 1:
     result = mData

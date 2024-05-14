@@ -12,7 +12,9 @@ import json
 MoveHistory = namedtuple("MoveHistory", ["times", "stage_positions"])
 
 IS_CLIENT = True
-SIGN_AXES = np.array([1, 1, 1]) # just for testing the algorithm
+# ONLY FOR TESTING/DEBUGGING:
+SIGN_AXES = {"X":-1, "Y":1, "Z":1}
+STAGE_ORDER = ["Y", "X", "Z"]
 # %%
 class LoggingMoveWrapper():
     """Wrap a move function, and maintain a log position/time.
@@ -65,7 +67,7 @@ class OFMStageScanClass(object):
         self._effPixelsize = effPixelsize
         self._stageStepSize = stageStepSize # given in microns 
         self._micronToPixel = self._effPixelsize/self._stageStepSize
-        self._stageOrder = ["X", "Y", "Z"]
+        self._stageOrder = STAGE_ORDER
         self._calibration_file_path = calibration_file_path
         
     def camera_stage_functions(self):
@@ -92,26 +94,26 @@ class OFMStageScanClass(object):
                 posDict = self._client.positionersManager.getPositionerPositions()[positioner_name]
             else:
                 posDict = self._client.positionersManager[self._client.positionersManager.getAllDeviceNames()[0]].getPosition()
-            return (SIGN_AXES[0]*posDict["X"]/self._micronToPixel, SIGN_AXES[1]*posDict["Y"]/self._micronToPixel, SIGN_AXES[2]*posDict["Z"]/self._micronToPixel)
+            return (SIGN_AXES[STAGE_ORDER[0]]*posDict["X"]/self._micronToPixel, SIGN_AXES[STAGE_ORDER[1]]*posDict["Y"]/self._micronToPixel, SIGN_AXES[STAGE_ORDER[2]]*posDict["Z"]/self._micronToPixel)
 
         def movePosition(posList):
             
             if IS_CLIENT:
                 positioner_names = self._client.positionersManager.getAllDeviceNames()
                 positioner_name = positioner_names[0]
-                self._client.positionersManager.movePositioner(positioner_name, dist=SIGN_AXES[0]*posList[0]*self._micronToPixel, axis=self._stageOrder[0], is_absolute=True, is_blocking=True)
+                self._client.positionersManager.movePositioner(positioner_name, dist=SIGN_AXES[STAGE_ORDER[0]]*posList[0]*self._micronToPixel, axis=self._stageOrder[0], is_absolute=True, is_blocking=True)
                 time.sleep(.1)
-                self._client.positionersManager.movePositioner(positioner_name, dist=SIGN_AXES[0]*posList[1]*self._micronToPixel, axis=self._stageOrder[1], is_absolute=True, is_blocking=True)
+                self._client.positionersManager.movePositioner(positioner_name, dist=SIGN_AXES[STAGE_ORDER[1]]*posList[1]*self._micronToPixel, axis=self._stageOrder[1], is_absolute=True, is_blocking=True)
             else:                
                 stage = self._client.positionersManager[self._client.positionersManager.getAllDeviceNames()[0]]
-                stage.move(value=SIGN_AXES[0]*posList[0]*self._micronToPixel, axis=self._stageOrder[0], is_absolute=True, is_blocking=True)
-                stage.move(value=SIGN_AXES[1]*posList[1]*self._micronToPixel, axis=self._stageOrder[1], is_absolute=True, is_blocking=True)
+                stage.move(value=SIGN_AXES[STAGE_ORDER[0]]*posList[0]*self._micronToPixel, axis=self._stageOrder[0], is_absolute=True, is_blocking=True)
+                stage.move(value=SIGN_AXES[STAGE_ORDER[1]]*posList[1]*self._micronToPixel, axis=self._stageOrder[1], is_absolute=True, is_blocking=True)
             
             if len(posList)>2:
                 if IS_CLIENT:
-                    self._client.positionersManager.movePositioner(positioner_name, dist=SIGN_AXES[2]*posList[2]*self._micronToPixel, axis=self._stageOrder[2], is_absolute=True, is_blocking=True)
+                    self._client.positionersManager.movePositioner(positioner_name, dist=SIGN_AXES[STAGE_ORDER[2]]*posList[2]*self._micronToPixel, axis=self._stageOrder[2], is_absolute=True, is_blocking=True)
                 else:
-                    stage.move(value=SIGN_AXES[2]*posList[2]*self._micronToPixel, axis=self._stageOrder[2], is_absolute=True, is_blocking=True)
+                    stage.move(value=SIGN_AXES[STAGE_ORDER[2]]*posList[2]*self._micronToPixel, axis=self._stageOrder[2], is_absolute=True, is_blocking=True)
 
         def settle(tWait=.1):
             time.sleep(tWait)
@@ -125,6 +127,7 @@ class OFMStageScanClass(object):
     def calibrate_1d(self, direction, return_backlash_data=False, nMultipliers=5):
         """Move a microscope's stage in 1D, and figure out the relationship with the camera"""
         grab_image, get_position, move, wait = self.camera_stage_functions()
+        move(np.zeros(3))  # move to the origin
         #mAxis = self._stageOrder[np.where(direction != 0)[0][0]]
         #nAxis = np.where(direction != 0)[0][0]
         current_position = get_position()
@@ -132,7 +135,7 @@ class OFMStageScanClass(object):
 
         tracker = Tracker(grab_image, get_position, settle=wait)
 
-        result = calibrate_backlash_1d(tracker, move, direction, return_backlash_data=return_backlash_data, nMultipliers=nMultipliers)
+        result = calibrate_backlash_1d(tracker, move, direction)#, return_backlash_data=return_backlash_data, nMultipliers=nMultipliers)
         result["move_history"] = move.history
         return result
     
@@ -140,7 +143,7 @@ class OFMStageScanClass(object):
 
     def calibrate_xy(self, return_backlash_data=False):
         """Move the microscope's stage in X and Y, to calibrate its relationship to the camera"""
-        try:
+        try: 
             self._logger.info("Calibrating X axis:")
             cal_x = self.calibrate_1d(np.array([1, 0, 0]), return_backlash_data=return_backlash_data)
             self._logger.info("Calibrating Y axis:")
