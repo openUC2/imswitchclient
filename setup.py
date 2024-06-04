@@ -39,7 +39,7 @@ setup(
     packages=find_packages(include=['imswitchclient', 'imswitchclient.*']),
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/beniroquai/imswitchclient',
+    url='https://github.com/openuc2/imswitchclient',
     version='0.1.2',
     zip_safe=False,
 )
