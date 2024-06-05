@@ -31,11 +31,16 @@ cX, cY = currentPositions["X"], currentPositions["Y"]
 positionList = []
 for ix in range(3): 
     for iy in range(3):
-        positionList.append((ix*100,iy*100))
-positionList = [(100,200,100), (200,300,400), (500,600,700)]
+        positionList.append((ix*100,iy*100,None))
 client.histoscanManager.startStageScanningPositionlistbased(positionList, nTimes=1, tPeriod=1)
 
 
+# wait until scan is finished
+while client.histoscanManager.getStatusScanRunning()["ishistoscanRunning"]:
+    print("Scan is running")
+    time.sleep(1)
+    
+    
 # start a stage scan and wait for it to finish 
 client.histoscanManager.startHistoScanTileBasedByParameters(numberTilesX, numberTilesY, stepSizeX, stepSizeY, initPosX, initPosY, nTimes, tPeriod)
 
