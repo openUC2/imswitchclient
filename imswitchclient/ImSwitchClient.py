@@ -10,6 +10,7 @@ import os
 from .positionersManager import positionersManager
 from .recordingManager import recordingManager
 from .lasersManager import lasersManager
+from .histoscanManager import histoscanManager
 
 
 class ImSwitchClient(object):
@@ -25,6 +26,7 @@ class ImSwitchClient(object):
         self.positionersManager = positionersManager(self)
         self.recordingManager = recordingManager(self)
         self.lasersManager = lasersManager(self)
+        self.histoscanManager = histoscanManager(self)
         
     @property
     def base_uri(self):
