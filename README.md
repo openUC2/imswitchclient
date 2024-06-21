@@ -68,6 +68,11 @@ for ix in range(10):
         # Return the positioner to its initial position
         client.positionersManager.movePositioner(positioner_name, "X", initialPosition[0], is_absolute=True, is_blocking=True)
         client.positionersManager.movePositioner(positioner_name, "Y", initialPosition[1], is_absolute=True, is_blocking=True)
+
+# additional functions:
+client.positersManager.homeAxis(positioner_name=positioner_name, axis="X", is_blocking=False)
+client.setPositionerSpeed(self.positioner_name, axis=axis, speed=speed)
+client.stop(positioner_name, axis="X")
 ```
 
 ## Contributing
