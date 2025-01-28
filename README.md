@@ -39,7 +39,7 @@ import matplotlib.pyplot as plt
 import time
 
 # Initialize the client
-client = imc.ImSwitchClient()
+client = imc.ImSwitchClient(host="0.0.0.0", isHttps=True, port=8001)
 
 # Retrieve the first positioner's name and current position
 positioner_names = client.positionersManager.getAllDeviceNames()
