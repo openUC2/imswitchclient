@@ -11,7 +11,19 @@ class positionersManager(object):
 
         response = self.parent.get_json(url, headers=headers)
         return response
-    
+
+    def stop(self, positioner_name, axis):
+        if positioner_name is None:
+            positioner_name = self.allStageNames[0]
+        
+        url = f"{self.parent.base_uri}/PositionerController/stop"
+        payload = {
+            'positionerName': positioner_name,
+            'axis': axis
+        }
+        response = self.parent.get_json(url, payload=payload)
+        return response           
+
     def movePositionerForever(self, speed=(0, 0, 0, 0), is_stop=False):
         if positioner_name is None:
             positioner_name = self.allStageNames[0]
