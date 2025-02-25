@@ -10,7 +10,12 @@
 
 Hit this link and test: 
 
-<a target="_blank" href="https://colab.research.google.com/github/https://colab.research.google.com/drive/1W3Jcw4gFn0jtQXa3_2aCtJYJglMNGkXr?usp=sharing">
+<a target="_blank" href="https://colab.research.google.com/drive/1W3Jcw4gFn0jtQXa3_2aCtJYJglMNGkXr?usp=sharing">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+
+<a target="_blank" href="https://colab.research.google.com/github/openUC2/imswitchclient/blob/main/examples/StageCalibration.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
