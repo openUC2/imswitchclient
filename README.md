@@ -6,6 +6,14 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/imswitchclient.svg)](https://pypi.python.org/pypi/imswitchclient)
 
+## Try on GOOGLE COLAB:
+
+Hit this link and test: 
+
+<a target="_blank" href="https://colab.research.google.com/github/https://colab.research.google.com/drive/1W3Jcw4gFn0jtQXa3_2aCtJYJglMNGkXr?usp=sharing">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 ## Features
 
 - **Remote Control**: Interface with ImSwitch through REST API endpoints.
