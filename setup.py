@@ -10,14 +10,14 @@ with open('README.md') as readme_file:
 with open("HISTORY.rst", "r") as fh:
     history = fh.read()
 
-requirements = [ ]
+requirements = [ "requests", "Pillow", "numpy", "matplotlib", "opencv-python", "python-socketio==5.12.1"]
 
 test_requirements = [ ]
 
 setup(
     author="Benedict Diederich",
     author_email='benedictdied@gmail.com',
-    python_requires='>=3.6',
+    python_requires='>=3.9',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

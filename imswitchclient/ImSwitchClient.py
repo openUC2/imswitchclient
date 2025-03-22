@@ -11,10 +11,11 @@ from .positionersManager import positionersManager
 from .recordingManager import recordingManager
 from .lasersManager import lasersManager
 from .histoscanManager import histoscanManager
-
+from .objectiveController import objectiveController
+from .socketClient import socketClient
 
 class ImSwitchClient(object):
-    def __init__(self, host="0.0.0.0", isHttps=True, port=8001):
+    def __init__(self, host="0.0.0.0", isHttps=True, port=8001, socket_port=8002):
         self.host = host
         self.port = port
         self.isHttps = isHttps
@@ -27,6 +28,11 @@ class ImSwitchClient(object):
         self.recordingManager = recordingManager(self)
         self.lasersManager = lasersManager(self)
         self.histoscanManager = histoscanManager(self)
+        self.objectiveController = objectiveController(self)
+
+        # initialize Socket.IO client
+        self.socketClient = socketClient(host=self.host, port=socket_port, isHttps=self.isHttps)
+
         
     @property
     def base_uri(self):

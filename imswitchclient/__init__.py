@@ -3,4 +3,4 @@ from imswitchclient import *
 
 __author__ = """Benedict Diederich"""
 __email__ = 'benedictdied@gmail.com'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
