@@ -11,6 +11,7 @@ from .positionersManager import positionersManager
 from .recordingManager import recordingManager
 from .lasersManager import lasersManager
 from .histoscanManager import histoscanManager
+from .experimentController import ExperimentController
 from .objectiveController import objectiveController
 from .socketClient import socketClient
 
@@ -28,6 +29,7 @@ class ImSwitchClient(object):
         self.recordingManager = recordingManager(self)
         self.lasersManager = lasersManager(self)
         self.histoscanManager = histoscanManager(self)
+        self.experimentController = ExperimentController(self)
         self.objectiveController = objectiveController(self)
 
         # initialize Socket.IO client
