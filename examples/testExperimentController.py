@@ -16,108 +16,69 @@ client.lasersManager.setLaserValue("LED", 100)
 mHardwareParameters = client.experimentController.getHardwareParameters()
 print("Hardware Parameters:", mHardwareParameters)
 
+
+
+def generate_neighbor_point_dict(x_center, y_center, dx, dy, stepsizex, stepsizey):
+    neighbors = []
+    max_dx = int(round((dx) / stepsizex))
+    max_dy = int(round((dy) / stepsizey))
+
+    for dy in range(-max_dy, max_dy + 1):
+        for dx in range(-max_dx, max_dx + 1):
+            if dx == 0 and dy == 0:
+                continue  # skip center point
+            neighbor_x = x_center + dx * stepsizex
+            neighbor_y = y_center + dy * stepsizey
+            neighbors.append({
+                "x": neighbor_x,
+                "y": neighbor_y,
+                "iX": dx,
+                "iY": dy
+            })
+
+    return {
+        "id": str(uuid.uuid4()),
+        "name": "",
+        "x": x_center,
+        "y": y_center,
+        "neighborPointList": neighbors
+    }
+
+snake_coordinates = generate_neighbor_point_dict(
+    x_center=85000,
+    y_center=65000,
+    dx=3200,  # range for neighbors
+    dy=3200,
+    stepsizex=800,
+    stepsizey=600
+)
+
+
 # Build the experiment JSON exactly like your provided example
 experiment_data = {
-    "name": "experiment",
+    "name": "testExperiment",
     "parameterValue": {
-        "illumination": "Brightfield",
+        "illumination": mHardwareParameters["illuSources"][0],
         "brightfield": False,
         "darkfield": False,
-        "laserWaveLength": 0,
+        "illuminationIntensity": mHardwareParameters["illuSourceMaxIntensities"][0],
         "differentialPhaseContrast": False,
-        "timeLapsePeriod": 0.1,
+        "timeLapsePeriod": 1,
         "numberOfImages": 1,
         "autoFocus": False,
-        "autoFocusMin": 0,
-        "autoFocusMax": 0,
-        "autoFocusStepSize": 0.1,
+        "autoFocusMin": -100,
+        "autoFocusMax": 100,
+        "autoFocusStepSize": 10,
         "zStack": False,
         "zStackMin": 0,
         "zStackMax": 0,
         "zStackStepSize": 0.1,
-        "speed": 0  # This field is in your original JSON but not in ParameterValue by default
+        "speed": 10000,  # Motorspeed
+        "gain": 20,
+        "exposureTime": 100000,  # from sample hardware parameters
     },
     "pointList": [
-        {
-            "id": str(uuid.uuid4()),
-            "name": "",
-            "x": 42668.321089379206,
-            "y": 54159.12253565382,
-            "neighborPointList": [
-                {"x": 42668.321089379206, "y": 54159.12253565382, "iX": 0, "iY": 0},
-                {"x": 42748.321089379206, "y": 54159.12253565382, "iX": 1, "iY": 0},
-                {"x": 42588.321089379206, "y": 54159.12253565382, "iX": -1, "iY": 0},
-                {"x": 42668.321089379206, "y": 54219.12253565382, "iX": 0, "iY": 1},
-                {"x": 42668.321089379206, "y": 54099.12253565382, "iX": 0, "iY": -1},
-                {"x": 42828.321089379206, "y": 54159.12253565382, "iX": 2, "iY": 0},
-                {"x": 42748.321089379206, "y": 54219.12253565382, "iX": 1, "iY": 1},
-                {"x": 42748.321089379206, "y": 54099.12253565382, "iX": 1, "iY": -1},
-                {"x": 42508.321089379206, "y": 54159.12253565382, "iX": -2, "iY": 0},
-                {"x": 42588.321089379206, "y": 54219.12253565382, "iX": -1, "iY": 1},
-                {"x": 42588.321089379206, "y": 54099.12253565382, "iX": -1, "iY": -1},
-                {"x": 42668.321089379206, "y": 54279.12253565382, "iX": 0, "iY": 2},
-                {"x": 42668.321089379206, "y": 54039.12253565382, "iX": 0, "iY": -2},
-                {"x": 42908.321089379206, "y": 54159.12253565382, "iX": 3, "iY": 0},
-                {"x": 42828.321089379206, "y": 54219.12253565382, "iX": 2, "iY": 1},
-                {"x": 42828.321089379206, "y": 54099.12253565382, "iX": 2, "iY": -1},
-                {"x": 42748.321089379206, "y": 54279.12253565382, "iX": 1, "iY": 2},
-                {"x": 42748.321089379206, "y": 54039.12253565382, "iX": 1, "iY": -2},
-                {"x": 42428.321089379206, "y": 54159.12253565382, "iX": -3, "iY": 0},
-                {"x": 42508.321089379206, "y": 54219.12253565382, "iX": -2, "iY": 1},
-                {"x": 42508.321089379206, "y": 54099.12253565382, "iX": -2, "iY": -1},
-                {"x": 42588.321089379206, "y": 54279.12253565382, "iX": -1, "iY": 2},
-                {"x": 42588.321089379206, "y": 54039.12253565382, "iX": -1, "iY": -2},
-                {"x": 42668.321089379206, "y": 54339.12253565382, "iX": 0, "iY": 3},
-                {"x": 42668.321089379206, "y": 53979.12253565382, "iX": 0, "iY": -3},
-                {"x": 42908.321089379206, "y": 54219.12253565382, "iX": 3, "iY": 1},
-                {"x": 42908.321089379206, "y": 54099.12253565382, "iX": 3, "iY": -1},
-                {"x": 42828.321089379206, "y": 54279.12253565382, "iX": 2, "iY": 2},
-                {"x": 42828.321089379206, "y": 54039.12253565382, "iX": 2, "iY": -2},
-                {"x": 42748.321089379206, "y": 54339.12253565382, "iX": 1, "iY": 3},
-                {"x": 42748.321089379206, "y": 53979.12253565382, "iX": 1, "iY": -3},
-                {"x": 42428.321089379206, "y": 54219.12253565382, "iX": -3, "iY": 1},
-                {"x": 42428.321089379206, "y": 54099.12253565382, "iX": -3, "iY": -1},
-                {"x": 42508.321089379206, "y": 54279.12253565382, "iX": -2, "iY": 2},
-                {"x": 42508.321089379206, "y": 54039.12253565382, "iX": -2, "iY": -2},
-                {"x": 42588.321089379206, "y": 54339.12253565382, "iX": -1, "iY": 3},
-                {"x": 42588.321089379206, "y": 53979.12253565382, "iX": -1, "iY": -3},
-                {"x": 42908.321089379206, "y": 54279.12253565382, "iX": 3, "iY": 2},
-                {"x": 42908.321089379206, "y": 54039.12253565382, "iX": 3, "iY": -2},
-                {"x": 42828.321089379206, "y": 54339.12253565382, "iX": 2, "iY": 3},
-                {"x": 42828.321089379206, "y": 53979.12253565382, "iX": 2, "iY": -3},
-                {"x": 42428.321089379206, "y": 54279.12253565382, "iX": -3, "iY": 2},
-                {"x": 42428.321089379206, "y": 54039.12253565382, "iX": -3, "iY": -2},
-                {"x": 42508.321089379206, "y": 54339.12253565382, "iX": -2, "iY": 3},
-                {"x": 42508.321089379206, "y": 53979.12253565382, "iX": -2, "iY": -3},
-                {"x": 42908.321089379206, "y": 54339.12253565382, "iX": 3, "iY": 3},
-                {"x": 42908.321089379206, "y": 53979.12253565382, "iX": 3, "iY": -3},
-                {"x": 42428.321089379206, "y": 54339.12253565382, "iX": -3, "iY": 3},
-                {"x": 42428.321089379206, "y": 53979.12253565382, "iX": -3, "iY": -3}
-            ]
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "",
-            "x": 44814.80267749491,
-            "y": 52791.26662165852,
-            "neighborPointList": [
-                {"x": 44814.80267749491, "y": 52791.26662165852, "iX": 0, "iY": 0},
-                {"x": 44894.80267749491, "y": 52791.26662165852, "iX": 1, "iY": 0},
-                {"x": 44734.80267749491, "y": 52791.26662165852, "iX": -1, "iY": 0},
-                {"x": 44814.80267749491, "y": 52851.26662165852, "iX": 0, "iY": 1},
-                {"x": 44814.80267749491, "y": 52731.26662165852, "iX": 0, "iY": -1},
-                {"x": 44974.80267749491, "y": 52791.26662165852, "iX": 2, "iY": 0},
-                {"x": 44894.80267749491, "y": 52851.26662165852, "iX": 1, "iY": 1},
-                {"x": 44894.80267749491, "y": 52731.26662165852, "iX": 1, "iY": -1},
-                {"x": 44654.80267749491, "y": 52791.26662165852, "iX": -2, "iY": 0},
-                {"x": 44734.80267749491, "y": 52851.26662165852, "iX": -1, "iY": 1},
-                {"x": 44734.80267749491, "y": 52731.26662165852, "iX": -1, "iY": -1},
-                {"x": 44974.80267749491, "y": 52851.26662165852, "iX": 2, "iY": 1},
-                {"x": 44974.80267749491, "y": 52731.26662165852, "iX": 2, "iY": -1},
-                {"x": 44654.80267749491, "y": 52851.26662165852, "iX": -2, "iY": 1},
-                {"x": 44654.80267749491, "y": 52731.26662165852, "iX": -2, "iY": -1}
-            ]
-        }
+        snake_coordinates
     ],
     # The additional fields from the "Experiment" model:
     "number_z_steps": 0,
@@ -138,6 +99,15 @@ experiment_data = {
 # Send the experiment data to startWellplateExperiment
 response = client.experimentController.startWellplateExperiment(experiment_data)
 print("Experiment started, response:", response)
+
+
+# wait for 10 seconds and then stop the experiment
+import time
+time.sleep(20)
+# Check the status of the experiment
+status = client.experimentController.getExperimentStatus()
+print("Experiment status:", status)
+client.experimentController.stopExperiment()
 
 # You can optionally pause, resume, or stop as needed:
 # pause_resp = client.experimentController.pauseWorkflow()
