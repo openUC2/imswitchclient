@@ -7,6 +7,15 @@ import io
 import cv2
 import threading
 import time
+import enum
+
+class SaveFormat(enum.Enum):
+    TIFF = 1
+    HDF5 = 2
+    ZARR = 3
+    MP4 = 4
+    PNG = 5
+    JPG = 6
 
 class MJPEGStreamReceiver:
     def __init__(self, stream_url):
@@ -103,4 +112,31 @@ class recordingManager(object):
         Get the most recent frame from the MJPEG stream
         '''
         return self.videoStream.getFrame()
-        
+    
+    def startRecording(self, save_format=None):
+        """Start recording with optional save format"""
+        url = f"{self.parent.base_uri}/RecordingController/startRecording"
+        headers = {'accept': 'application/json'}
+        payload = {}
+        if save_format is not None:
+            if isinstance(save_format, SaveFormat):
+                payload['saveFormat'] = save_format.value
+            else:
+                payload['saveFormat'] = save_format
+        response = self.parent.get_json(url, payload=payload, headers=headers)
+        return response
+    
+    def stopRecording(self):
+        """Stop current recording"""
+        url = f"{self.parent.base_uri}/RecordingController/stopRecording"
+        headers = {'accept': 'application/json'}
+        response = self.parent.get_json(url, headers=headers)
+        return response
+    
+    def snapImageToPath(self, file_name):
+        """Snap image and save to specified path"""
+        url = f"{self.parent.base_uri}/RecordingController/snapImageToPath"
+        headers = {'accept': 'application/json'}
+        payload = {'fileName': file_name}
+        response = self.parent.get_json(url, payload=payload, headers=headers)
+        return response
