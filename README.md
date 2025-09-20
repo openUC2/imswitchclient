@@ -135,10 +135,53 @@ The ImSwitch API provides access to various components:
 - `startRecording()` - Begin recording.
 - `stopRecording()` - Stop recording.
 
+### Settings Manager
+- `getDetectorNames()` - Get available detector names.
+- `setDetectorBinning(detector_name, binning)` - Set detector binning.
+- `setDetectorExposureTime(detector_name, exposure_time)` - Set detector exposure time.
+- `setDetectorGain(detector_name, gain)` - Set detector gain.
+- `setDetectorParameter(detector_name, parameter_name, value)` - Set generic detector parameter.
+- `setDetectorROI(detector_name, x, y, w, h)` - Set detector Region of Interest.
+
 ### View Manager
-- `setLiveViewActive(status)` - Enable live view.
-- `setLiveViewCrosshairVisible(status)` - Show/hide crosshair.
-- `setLiveViewGridVisible(status)` - Show/hide grid.
+- `setLiveViewActive(active)` - Enable/disable live view.
+- `setLiveViewCrosshairVisible(visible)` - Show/hide crosshair in live view.
+- `setLiveViewGridVisible(visible)` - Show/hide grid in live view.
+
+### LED Matrix Manager
+- `setAllLED(state, intensity)` - Set all LEDs with specified state and intensity.
+- `setAllLEDOff()` - Turn off all LEDs.
+- `setAllLEDOn()` - Turn on all LEDs.
+- `setIntensity(intensity)` - Set LED intensity.
+- `setLED(led_id, state)` - Set specific LED with ID and state.
+- `setSpecial(pattern, intensity, get_return)` - Set special LED pattern.
+
+### Communication Manager
+- `acquireImage()` - Acquire an image through communication channel.
+- `getImage()` - Get an image from communication channel.
+
+### Experiment Controller
+- `forceStopExperiment()` - Force stop current experiment.
+- `getExperimentStatus()` - Get current experiment status.
+- `getHardwareParameters()` - Get hardware parameters.
+- `pauseWorkflow()` - Pause current workflow.
+- `resumeExperiment()` - Resume paused experiment.
+- `stopExperiment()` - Stop current experiment.
+- `startWellplateExperiment(experiment_data)` - Start wellplate experiment.
+- `startWellplateExperimentWithScanCoordinates(...)` - Start wellplate experiment with scan coordinates.
+
+### HistoScan Manager
+- `stopHistoScan()` - Stop current histo scan.
+- `startStageScanningPositionlistbased(positionList, nTimes, tPeriod, illuSource)` - Start stage scanning.
+- `startStageMapping()` - Start stage mapping.
+- `getStatusScanRunning()` - Get scan running status.
+
+### Objective Controller
+- `calibrateObjective(homeDirection, homePolarity)` - Calibrate objective.
+- `getCurrentObjective()` - Get current objective.
+- `getStatus()` - Get objective status.
+- `moveToObjective(slot)` - Move to specific objective slot.
+- `setPositions(x1, x2, z1, z2, isBlocking)` - Set objective positions.
 
 ## Contributing
 

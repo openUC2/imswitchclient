@@ -13,6 +13,10 @@ from .lasersManager import lasersManager
 from .histoscanManager import histoscanManager
 from .experimentController import ExperimentController
 from .objectiveController import objectiveController
+from .ledMatrixManager import ledMatrixManager
+from .settingsManager import settingsManager
+from .viewManager import viewManager
+from .communicationManager import communicationManager
 from .socketClient import socketClient
 
 class ImSwitchClient(object):
@@ -31,6 +35,10 @@ class ImSwitchClient(object):
         self.histoscanManager = histoscanManager(self)
         self.experimentController = ExperimentController(self)
         self.objectiveController = objectiveController(self)
+        self.ledMatrixManager = ledMatrixManager(self)
+        self.settingsManager = settingsManager(self)
+        self.viewManager = viewManager(self)
+        self.communicationManager = communicationManager(self)
 
         # initialize Socket.IO client
         self.socketClient = socketClient(host=self.host, port=socket_port, isHttps=self.isHttps)
