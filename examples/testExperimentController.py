@@ -83,17 +83,7 @@ experiment_data = {
     # The additional fields from the "Experiment" model:
     "number_z_steps": 0,
     "timepoints": 1,
-    "x_pixels": 0,
-    "y_pixels": 0,
-    "microscope_name": "FRAME",
-    "is_multiposition": False,
-    "channels": {
-        "Ch0": {
-            "is_selected": True,
-            "camera_exposure_time": 0.0
-        }
-    },
-    "multi_positions": {}
+    "experiment_name": "FRAME"
 }
 
 # Send the experiment data to startWellplateExperiment
