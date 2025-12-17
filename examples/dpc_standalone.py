@@ -30,6 +30,8 @@ F = lambda x: np.fft.fft2(x)
 IF = lambda x: np.fft.ifft2(x)
 
 
+
+
 # =========================
 # Configuration Dataclass
 # =========================
@@ -40,9 +42,9 @@ class DPCConfig:
     pixelsize: float = 0.2  # micrometers
     wavelength: float = 0.53  # micrometers (green light)
     na: float = 0.3  # Numerical aperture
-    nai: float = 0.3  # Inner NA
+    nai: float = 0.0  # Inner NA
     n: float = 1.0  # Refractive index
-    
+    stack_order : list = (0,1,2,3)  # Order of LED patterns: right, left, top, bottom
     # LED parameters
     led_intensity_r: int = 0  # Red channel intensity
     led_intensity_g: int = 255  # Green channel intensity (default)
@@ -198,7 +200,6 @@ class DPCSolver:
         xlin = np.arange(size, dtype='complex128')
         return (xlin-size//2)*dx
 
-
 # =========================
 # DPC Processor
 # =========================
@@ -242,6 +243,7 @@ class DPCProcessor:
         Returns:
             Tuple of (dpc_lr, dpc_tb, qdpc_result) or None on error
         """
+        stack = stack.astype('float64')
         try:
             if stack.shape[0] != 4:
                 print(f"Error: Expected 4 images, got {stack.shape[0]}")
@@ -399,116 +401,147 @@ def visualize_dpc_results(dpc_lr, dpc_tb, qdpc_result):
     
     plt.tight_layout()
     plt.show()
+    
+def visualize_raw_images(stack):
+    """Visualize raw DPC images"""
+    # Also visualize raw images 
+    fig2, axes2 = plt.subplots(1, 4, figsize=(16, 4))
+    pattern_titles = ['Top', 'Bottom', 'Right', 'Left']
+    for i in range(4):
+        im = axes2[i].imshow(stack[i], cmap='gray')
+        axes2[i].set_title(f'Raw Image - {pattern_titles[i]}')
+        axes2[i].axis('off')
+        plt.colorbar(im, ax=axes2[i])   
+        
+    plt.tight_layout()
+    plt.show()
+
+def visuaalize_transfer_function(dpc_solver: DPCSolver):
+    """Visualize DPC transfer functions"""
+    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+    
+    for i in range(dpc_solver.dpc_num):
+        im_hu = axes[0, i].imshow(np.abs(dpc_solver.Hu[i]), cmap='viridis')
+        axes[0, i].set_title(f'|Hu| - Pattern {i+1}')
+        axes[0, i].axis('off')
+        plt.colorbar(im_hu, ax=axes[0, i])
+        
+        im_hp = axes[1, i].imshow(np.abs(dpc_solver.Hp[i]), cmap='viridis')
+        axes[1, i].set_title(f'|Hp| - Pattern {i+1}')
+        axes[1, i].axis('off')
+        plt.colorbar(im_hp, ax=axes[1, i])
+    
+    plt.tight_layout()
+    plt.show()
+    
+    
+"""Main DPC acquisition and processing"""
+api_port = 8001
+socket_port = 8001
+host_url = "100.75.71.84"
 
 
-# =========================
-# Main Script
-# =========================
-def main():
-    """Main DPC acquisition and processing"""
+# Configuration
+config = DPCConfig(
+    # Optical parameters
+    pixelsize=0.2,  # um
+    wavelength=0.53,  # um (green)
+    na=0.3,
+    nai=0.0,
+    n=1.0,
+    stack_order = [2,3,0,1],  # right, left, top, bottom
     
-    # Configuration
-    config = DPCConfig(
-        # Optical parameters
-        pixelsize=0.2,  # um
-        wavelength=0.53,  # um (green)
-        na=0.3,
-        nai=0.3,
-        n=1.0,
-        
-        # LED parameters
-        led_intensity_r=0,
-        led_intensity_g=255,
-        led_intensity_b=0,
-        wait_time=0.3,  # seconds between patterns
-        
-        # Regularization
-        reg_u=1e-1,
-        reg_p=5e-3,
-        
-        # Saving
-        save_images=True,
-        save_directory="./dpc_results"
-    )
+    # LED parameters
+    led_intensity_r=0,
+    led_intensity_g=255,
+    led_intensity_b=0,
+    wait_time=0.3,  # seconds between patterns
     
-    print("=== DPC Standalone Processing ===")
-    print(f"Configuration: {config.to_dict()}")
+    # Regularization
+    reg_u=1e-1,
+    reg_p=5e-3,
     
-    # Connect to ImSwitch (without Socket.IO to avoid threading errors)
-    print("\nConnecting to ImSwitch...")
+    # Saving
+    save_images=True,
+    save_directory="./dpc_results"
+)
+
+
+print("=== DPC Standalone Processing ===")
+print(f"Configuration: {config.to_dict()}")
+
+# Connect to ImSwitch (without Socket.IO to avoid threading errors)
+print("\nConnecting to ImSwitch...")
+try:
+    # Create client without socket connection to avoid Socket.IO errors
+    client = imc.ImSwitchClient(host=host_url, port=api_port, isHttps=False, socket_port=None)
+    print("Connected successfully!")
+except Exception as e:
+    print(f"Error connecting to ImSwitch: {e}")
+    # Try without explicit socket_port parameter
     try:
-        # Create client without socket connection to avoid Socket.IO errors
-        client = imc.ImSwitchClient(host="100.104.189.88", port=8001, isHttps=False, socket_port=None)
-        print("Connected successfully!")
-    except Exception as e:
-        print(f"Error connecting to ImSwitch: {e}")
-        # Try without explicit socket_port parameter
-        try:
-            client = imc.ImSwitchClient(host="100.104.189.88", port=8001, isHttps=False)
-            print("Connected successfully (with Socket.IO - may show threading warnings)!")
-        except Exception as e2:
-            print(f"Error connecting to ImSwitch: {e2}")
-            return
-    
-    # Initialize acquisition
-    acquisition = DPCAcquisition(client, config)
-    
-    # Capture initial frame to get shape
-    print("\nCapturing initial frame to determine image size...")
-    initial_frame = client.recordingManager.snapNumpyToFastAPI()
-    if initial_frame is None:
-        print("Error: Could not capture initial frame")
-        return
-    
-    if len(initial_frame.shape) > 2:
-        initial_frame = np.mean(initial_frame, axis=2)
-    
-    frame_shape = initial_frame.shape
-    print(f"Image shape: {frame_shape}")
-    
-    # Initialize processor
-    print("\nInitializing DPC processor...")
-    processor = DPCProcessor(shape=frame_shape, config=config)
-    
-    # Capture DPC stack
-    print("\nCapturing DPC stack...")
-    stack = acquisition.capture_dpc_stack()
-    
-    if stack is None:
-        print("Error: Failed to capture DPC stack")
-        return
-    
-    print(f"Captured stack with shape: {stack.shape}")
-    
-    # Process stack
-    print("\nProcessing DPC stack...")
-    t_start = time.time()
-    result = processor.process_stack(stack)
-    t_end = time.time()
-    
-    if result is None:
-        print("Error: DPC processing failed")
-        return
-    
-    dpc_lr, dpc_tb, qdpc_result = result
-    print(f"Processing completed in {t_end - t_start:.3f} seconds")
-    
-    # Clean up - disconnect socket if connected
-    try:
-        if hasattr(client, 'socketClient') and client.socketClient is not None:
-            if hasattr(client.socketClient, 'sio') and client.socketClient.sio.connected:
-                client.socketClient.sio.disconnect()
-                print("Socket.IO disconnected")
-    except Exception as e:
-        # Ignore socket disconnect errors
-        pass
-    
-    # Visualize results
-    print("\nVisualizing results...")
-    visualize_dpc_results(dpc_lr, dpc_tb, qdpc_result)
-    
-    print("\n=== DPC Processing Complete ===")
+        client = imc.ImSwitchClient(host=host_url, port=api_port, isHttps=False)
+        print("Connected successfully (with Socket.IO - may show threading warnings)!")
+    except Exception as e2:
+        print(f"Error connecting to ImSwitch: {e2}")
 
+# Initialize acquisition
+acquisition = DPCAcquisition(client, config)
 
-if __name__ == "__main__":
-    main()
+# Capture initial frame to get shape
+print("\nCapturing initial frame to determine image size...")
+initial_frame = client.recordingManager.snapNumpyToFastAPI()
+if initial_frame is None:
+    print("Error: Could not capture initial frame")
+
+if len(initial_frame.shape) > 2:
+    initial_frame = np.mean(initial_frame, axis=2)
+
+frame_shape = initial_frame.shape
+print(f"Image shape: {frame_shape}")
+
+# Initialize processor
+print("\nInitializing DPC processor...")
+processor = DPCProcessor(shape=frame_shape, config=config)
+
+# Capture DPC stack
+print("\nCapturing DPC stack...")
+stack = acquisition.capture_dpc_stack()
+stack = stack.astype('float64')
+# reorder slices in the 0th dimension according to config.stack_order
+stack = stack[config.stack_order, :, :]
+
+if stack is None:
+    print("Error: Failed to capture DPC stack")
+
+print(f"Captured stack with shape: {stack.shape}")
+
+# Process stack
+print("\nProcessing DPC stack...")
+t_start = time.time()
+result = processor.process_stack(stack)
+t_end = time.time()
+
+if result is None:
+    print("Error: DPC processing failed")
+
+dpc_lr, dpc_tb, qdpc_result = result
+print(f"Processing completed in {t_end - t_start:.3f} seconds")
+
+# Clean up - disconnect socket if connected
+try:
+    if hasattr(client, 'socketClient') and client.socketClient is not None:
+        if hasattr(client.socketClient, 'sio') and client.socketClient.sio.connected:
+            client.socketClient.sio.disconnect()
+            print("Socket.IO disconnected")
+except Exception as e:
+    # Ignore socket disconnect errors
+    pass
+
+# Visualize results
+print("\nVisualizing results...")
+visualize_dpc_results(dpc_lr, dpc_tb, qdpc_result)
+visualize_raw_images(stack)
+visuaalize_transfer_function(processor.dpc_solver)
+print("\n=== DPC Processing Complete ===")
+
