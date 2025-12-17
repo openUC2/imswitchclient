@@ -20,7 +20,7 @@ from .communicationManager import communicationManager
 from .socketClient import socketClient
 
 class ImSwitchClient(object):
-    def __init__(self, host="0.0.0.0", isHttps=True, port=8001, socket_port=8002):
+    def __init__(self, host="0.0.0.0", isHttps=True, port=8001, socket_port=8001):
         self.host = host
         self.port = port
         self.isHttps = isHttps
