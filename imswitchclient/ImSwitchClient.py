@@ -12,6 +12,7 @@ from .recordingManager import recordingManager
 from .lasersManager import lasersManager
 from .histoscanManager import histoscanManager
 from .experimentController import ExperimentController
+from .mdaController import mdaController
 from .objectiveController import objectiveController
 from .ledMatrixManager import ledMatrixManager
 from .settingsManager import settingsManager
@@ -20,11 +21,12 @@ from .communicationManager import communicationManager
 from .socketClient import socketClient
 
 class ImSwitchClient(object):
-    def __init__(self, host="0.0.0.0", isHttps=True, port=8001, socket_port=8001):
+    def __init__(self, host="0.0.0.0", isHttps=False, port=8001, socket_port=8001, route="/imswitch/api"):
         self.host = host
         self.port = port
         self.isHttps = isHttps
-        self.get_json(self.base_uri+"/openapi.json")
+        self.route = route
+        self.get_json(self.base_swagger_uri)
         
         logging.info(f"Connecting to microscope {self.host}:{self.port}")
         
@@ -34,6 +36,7 @@ class ImSwitchClient(object):
         self.lasersManager = lasersManager(self)
         self.histoscanManager = histoscanManager(self)
         self.experimentController = ExperimentController(self)
+        self.mdaController = mdaController(self)
         self.objectiveController = objectiveController(self)
         self.ledMatrixManager = ledMatrixManager(self)
         self.settingsManager = settingsManager(self)
@@ -47,9 +50,17 @@ class ImSwitchClient(object):
     @property
     def base_uri(self):
         if self.isHttps:
-            return f"https://{self.host}:{self.port}"
+            return f"https://{self.host}:{self.port}{self.route}"
         else:
-            return f"http://{self.host}:{self.port}"
+            return f"http://{self.host}:{self.port}{self.route}"
+
+    @property
+    def base_swagger_uri(self):
+        if self.isHttps:
+            return f"https://{self.host}:{self.port}/imswitch/openapi.json"
+        else:
+            return f"http://{self.host}:{self.port}/imswitch/openapi.json"
+
 
     def get_json(self, path, payload={}, headers={}):
         """Perform an HTTP GET request and return the JSON response"""

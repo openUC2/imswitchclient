@@ -12,7 +12,7 @@ import urllib3
 urllib3.disable_warnings()
 
 class ImSwitchClient(object):
-    def __init__(self, host="localhost", port=8000):
+    def __init__(self, host="localhost", route="/imswitch", port=8001):
         self.host = host
         self.port = port
         self.get_json(self.base_uri)
@@ -20,7 +20,8 @@ class ImSwitchClient(object):
         
     @property
     def base_uri(self):
-        return f"http://{self.host}:{self.port}/api/v2"
+        # http://localhost:8001/imswitch/api
+        return f"http://{self.host}:{self.port}/imswitch/api/v2"
 
     def get_json(self, path):
         """Perform an HTTP GET request and return the JSON response"""
