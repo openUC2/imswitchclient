@@ -1,12 +1,5 @@
 import requests
-import json
-import time
-import io
-import PIL.Image
-import numpy as np
 import logging
-import os
-
 from .positionersManager import positionersManager
 from .recordingManager import recordingManager
 from .lasersManager import lasersManager
@@ -21,7 +14,7 @@ from .communicationManager import communicationManager
 from .socketClient import socketClient
 
 class ImSwitchClient(object):
-    def __init__(self, host="0.0.0.0", isHttps=False, port=8001, socket_port=8001, route="/imswitch/api"):
+    def __init__(self, host="0.0.0.0", isHttps=False, port=8001, route="/imswitch/api"):
         self.host = host
         self.port = port
         self.isHttps = isHttps
@@ -44,8 +37,11 @@ class ImSwitchClient(object):
         self.communicationManager = communicationManager(self)
 
         # initialize Socket.IO client
-        self.socketClient = socketClient(host=self.host, port=socket_port, isHttps=self.isHttps)
-
+        try:
+            self.socketClient = socketClient(host=self.host, port=port, isHttps=self.isHttps)
+        except Exception as e:
+            logging.error(f"Failed to connect Socket.IO client: {e}")
+            self.socketClient = None
         
     @property
     def base_uri(self):
@@ -56,17 +52,13 @@ class ImSwitchClient(object):
 
     @property
     def base_swagger_uri(self):
-        if self.isHttps:
-            return f"https://{self.host}:{self.port}/imswitch/openapi.json"
-        else:
-            return f"http://{self.host}:{self.port}/imswitch/openapi.json"
-
-
+        return self.base_uri.replace("/api", "") + "/openapi.json"
+        
     def get_json(self, path, payload={}, headers={}):
         """Perform an HTTP GET request and return the JSON response"""
         if not path.startswith("http"):
             path = self.base_uri + path
-        r = requests.get(path, params=payload, headers=headers, verify=False)
+        r = requests.get(path, params=payload, headers=headers, verify=False, timeout=1)
         r.raise_for_status()
         return r.json()
 

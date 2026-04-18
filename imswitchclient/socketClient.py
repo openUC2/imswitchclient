@@ -3,7 +3,7 @@ import logging
 import ssl
 
 class socketClient(object):
-    def __init__(self, host="localhost", port=8002, isHttps=False):
+    def __init__(self, host="localhost", port=80, isHttps=False):
         self.host = host
         self.port = port
         self.isHttps = isHttps
@@ -15,19 +15,16 @@ class socketClient(object):
         self.connect()
 
     def connect(self):
+        socketio_path = "/imswitch/socket.io"
+        transports = ["websocket"]
         if self.isHttps:
             url = f"https://{self.host}:{self.port}"
-            ssl_ctx = ssl.create_default_context()
-            ssl_ctx.check_hostname = False
-            ssl_ctx.verify_mode = ssl.CERT_NONE
-            logging.info(f"Connecting securely (no cert check) to {url}")
-            
-            self.sio.connect(url)
-
+            logging.info(f"Connecting securely (no cert check) to {url}{socketio_path}")
+            self.sio.connect(url, socketio_path=socketio_path, transports=transports)
         else:
             url = f"http://{self.host}:{self.port}"
-            logging.info(f"Connecting to {url}")
-            self.sio.connect(url)
+            logging.info(f"Connecting Socket to {url}{socketio_path}")
+            self.sio.connect(url, socketio_path=socketio_path, transports=transports)
 
     def _on_sig_update_image(self, data):
         self.images.append(data)

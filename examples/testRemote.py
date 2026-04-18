@@ -6,7 +6,7 @@ import uuid
 # including a point list with a large set of neighbor coordinates.
 
 # Instantiate the ImSwitchClient
-client = imc.ImSwitchClient(host="localhost", port=8001, isHttps=False)
+client = imc.ImSwitchClient(host="100.112.95.94", port=80, isHttps=False, route="/imswitch/api")
 
 # Turn on LED, set to intensity 100
 client.lasersManager.setLaserActive("LED", True)
@@ -61,7 +61,7 @@ experiment_data = {
         "illumination": mHardwareParameters["illuSources"][0],
         "brightfield": False,
         "darkfield": False,
-        "illuminationIntensity": mHardwareParameters["illuSourceMaxIntensities"][0],
+        "illuIntensities": mHardwareParameters["illuSourceMaxIntensities"][0],
         "differentialPhaseContrast": False,
         "timeLapsePeriod": 1,
         "numberOfImages": 1,
@@ -74,8 +74,8 @@ experiment_data = {
         "zStackMax": 0,
         "zStackStepSize": 0.1,
         "speed": 10000,  # Motorspeed
-        "gain": 20,
-        "exposureTime": 100000,  # from sample hardware parameters
+        "gains": 20,
+        "exposureTimes": 100000,  # from sample hardware parameters
     },
     "pointList": [
         snake_coordinates
