@@ -1,0 +1,40 @@
+[
+  {
+    "label": "min",
+    "exposureMs": 0.1,
+    "frames": 20,
+    "sessionId": "20260913_131214_darkcal_min",
+    "relPath": "recordings/readnoise_calibration/20260913_131214_darkcal_min/dark/dark_stack.tif",
+    "shape": [
+      20,
+      3000,
+      2992
+    ],
+    "dtype": "uint16",
+    "mean": 1.9454206662210338,
+    "std": 34.573796061208895,
+    "temporalStd": 5.4463070243930165,
+    "frameToFrameSpread": 0.014100026068086713,
+    "min": 0,
+    "max": 4178
+  },
+  {
+    "label": "100ms",
+    "exposureMs": 100.0,
+    "frames": 10,
+    "sessionId": "20260913_131228_darkcal_100ms",
+    "relPath": "recordings/readnoise_calibration/20260913_131228_darkcal_100ms/dark/dark_stack.tif",
+    "shape": [
+      10,
+      3000,
+      2992
+    ],
+    "dtype": "uint16",
+    "mean": 1.8091558043672014,
+    "std": 33.95507266781627,
+    "temporalStd": 4.133883067195725,
+    "frameToFrameSpread": 0.011964762890706979,
+    "min": 0,
+    "max": 7576
+  }
+]
