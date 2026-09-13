@@ -436,9 +436,8 @@ def visuaalize_transfer_function(dpc_solver: DPCSolver):
     
     
 """Main DPC acquisition and processing"""
-api_port = 8001
 socket_port = 8001
-host_url = "100.75.71.84"
+host_url = "http://100.75.71.84:8001/imswitch/api"
 
 
 # Configuration
@@ -474,13 +473,13 @@ print(f"Configuration: {config.to_dict()}")
 print("\nConnecting to ImSwitch...")
 try:
     # Create client without socket connection to avoid Socket.IO errors
-    client = imc.ImSwitchClient(host=host_url, port=api_port, isHttps=False, socket_port=None)
+    client = imc.ImSwitchClient(host_url, socket_port=None)
     print("Connected successfully!")
 except Exception as e:
     print(f"Error connecting to ImSwitch: {e}")
     # Try without explicit socket_port parameter
     try:
-        client = imc.ImSwitchClient(host=host_url, port=api_port, isHttps=False)
+        client = imc.ImSwitchClient(host_url)
         print("Connected successfully (with Socket.IO - may show threading warnings)!")
     except Exception as e2:
         print(f"Error connecting to ImSwitch: {e2}")

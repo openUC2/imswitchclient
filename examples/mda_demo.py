@@ -30,17 +30,9 @@ class MDADemo:
     """Demonstration class for MDA functionality in ImSwitch."""
     
     def __init__(self, server_url: str):
-        # Parse server URL
-        if "://" in server_url:
-            parts = server_url.split("://")[1].split(":")
-            host = parts[0]
-            port = int(parts[1]) if len(parts) > 1 else 8001
-        else:
-            parts = server_url.split(":")
-            host = parts[0]
-            port = int(parts[1]) if len(parts) > 1 else 8001
-        
-        self.client = ImSwitchClient(host=host, port=port)
+        # ImSwitchClient takes a full URL ("http://192.168.178.76/imswitch/api",
+        # "http://localhost:8001") or a bare host name.
+        self.client = ImSwitchClient(server_url)
         
     def check_capabilities(self) -> Dict[str, Any]:
         """Check if MDA functionality is available."""

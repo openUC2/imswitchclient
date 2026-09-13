@@ -14,8 +14,11 @@ rescalingFac=10.0
 gridScan=True
 pixelSize = 1.0
 
-# Instantiate the ImSwitchClient
-client = imc.ImSwitchClient(port=8002, isHttps=False)
+# ImSwitch API endpoint. None uses $IMSWITCH_API_URL (set for notebooks ImSwitch
+# serves itself), else http://localhost:8001/imswitch/api. Behind Caddy/Docker on
+# a Raspberry Pi the API sits on port 80: "http://192.168.178.76/imswitch/api".
+IMSWITCH_URL = "http://localhost:8002/imswitch/api"
+client = imc.ImSwitchClient(IMSWITCH_URL)
 client.positionersManager.movePositioner("ESP32Stage", "XY", (10,10), is_absolute=True, is_blocking=True)
 #%%
 # Test the get_positioner_names method

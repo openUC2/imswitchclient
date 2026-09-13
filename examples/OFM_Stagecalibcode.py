@@ -16,11 +16,11 @@ scanStep = 50
 rescalingFac=10.0
 gridScan=True
 pixelSize = 1.0
-isHTTPS = False
-mPort = 8001
-
-# Instantiate the ImSwitchClient
-client = imc.ImSwitchClient(host="localhost", isHttps=isHTTPS, port=mPort) 
+# ImSwitch API endpoint. None uses $IMSWITCH_API_URL (set for notebooks ImSwitch
+# serves itself), else http://localhost:8001/imswitch/api. Behind Caddy/Docker on
+# a Raspberry Pi the API sits on port 80: "http://192.168.178.76/imswitch/api".
+IMSWITCH_URL = "http://localhost:8001/imswitch/api"
+client = imc.ImSwitchClient(IMSWITCH_URL)
 
 
 # %% set laser value 

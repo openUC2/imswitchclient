@@ -42,9 +42,22 @@ pip install imswitchclient
 ```python
 import imswitchclient.ImSwitchClient as imc
 
-# Initialize the client
-client = imc.ImSwitchClient(host="0.0.0.0", isHttps=True, port=8001)
+# A full URL is the least ambiguous way to say where ImSwitch is:
+client = imc.ImSwitchClient("http://localhost:8001/imswitch/api")   # local instance
+client = imc.ImSwitchClient("http://192.168.178.76/imswitch/api")   # Raspberry Pi / Docker behind Caddy (port 80)
+client = imc.ImSwitchClient("https://imswitch.openuc2.com")         # https -> port 443
+
+# Without arguments it uses $IMSWITCH_API_URL - which ImSwitch sets for the
+# notebooks it serves itself - and otherwise http://localhost:8001/imswitch/api.
+client = imc.ImSwitchClient()
+
+# The classic form still works; a bare host name keeps the old defaults (port 8001, http).
+client = imc.ImSwitchClient(host="192.168.178.76", port=80, isHttps=False)
+
+print(client.base_uri)   # http://192.168.178.76:80/imswitch/api
 ```
+
+Pass `socket_port=` when Socket.IO is not served on the API port.
 
 ### Example: Moving a Stage and Acquiring an Image
 
@@ -207,7 +220,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Initialize client
-client = imc.ImSwitchClient(host="192.168.1.100", port=8001)
+client = imc.ImSwitchClient("http://192.168.1.100:8001/imswitch/api")
 
 # XY scanning parameters
 start_x, start_y = 0, 0  # Starting position in µm
@@ -270,7 +283,7 @@ import imswitchclient.ImSwitchClient as imc
 import numpy as np
 
 # Initialize client
-client = imc.ImSwitchClient(host="192.168.1.100", port=8001)
+client = imc.ImSwitchClient("http://192.168.1.100:8001/imswitch/api")
 
 def calculate_focus_score(image):
     """Calculate focus score using Laplacian variance"""
@@ -323,7 +336,7 @@ from imswitchclient.recordingManager import SaveFormat
 import time
 
 # Initialize client
-client = imc.ImSwitchClient(host="192.168.1.100", port=8001)
+client = imc.ImSwitchClient("http://192.168.1.100:8001/imswitch/api")
 
 # Setup LED illumination
 client.ledMatrixManager.setAllLEDOff()
@@ -368,7 +381,7 @@ import imswitchclient.ImSwitchClient as imc
 from imswitchclient.recordingManager import SaveFormat
 
 # Initialize client
-client = imc.ImSwitchClient(host="192.168.1.100", port=8001)
+client = imc.ImSwitchClient("http://192.168.1.100:8001/imswitch/api")
 
 # Define multiple positions of interest
 positions = [

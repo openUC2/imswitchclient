@@ -12,8 +12,11 @@ nTimes = 1
 tPeriod = 1
 
 
-# Instantiate the ImSwitchClient
-client = imc.ImSwitchClient(port=8001, isHttps=False)
+# ImSwitch API endpoint. None uses $IMSWITCH_API_URL (set for notebooks ImSwitch
+# serves itself), else http://localhost:8001/imswitch/api. Behind Caddy/Docker on
+# a Raspberry Pi the API sits on port 80: "http://192.168.178.76/imswitch/api".
+IMSWITCH_URL = "http://localhost:8001/imswitch/api"
+client = imc.ImSwitchClient(IMSWITCH_URL)
 
 # turn on laser
 client.lasersManager.setLaserActive("LED", True)

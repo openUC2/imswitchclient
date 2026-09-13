@@ -8,7 +8,7 @@ Example usage:
     from imswitchclient import ImSwitchClient
     from useq import MDASequence, Channel, ZRangeAround
     
-    client = ImSwitchClient('localhost', port=8001)
+    client = ImSwitchClient('http://localhost:8001/imswitch/api')
     
     # Create MDA sequence
     sequence = MDASequence(

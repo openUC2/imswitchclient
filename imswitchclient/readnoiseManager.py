@@ -17,7 +17,7 @@ class readnoiseManager(object):
 
     def dataUrl(self, relPath):
         """Absolute URL of a file the API reported as a `dataRelPath`/`relPath`"""
-        return self.parent.base_uri.replace("/api", "") + "/data/" + relPath.lstrip("/")
+        return f"{self.parent.base_root_uri}/data/{relPath.lstrip('/')}"
 
     # --- status / settings -------------------------------------------------
     def getStatus(self):

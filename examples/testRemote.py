@@ -5,8 +5,11 @@ import uuid
 # Example: replicating the exact "Experiment" JSON structure from your reference,
 # including a point list with a large set of neighbor coordinates.
 
-# Instantiate the ImSwitchClient
-client = imc.ImSwitchClient(host="100.112.95.94", port=80, isHttps=False, route="/imswitch/api")
+# ImSwitch API endpoint. None uses $IMSWITCH_API_URL (set for notebooks ImSwitch
+# serves itself), else http://localhost:8001/imswitch/api. Behind Caddy/Docker on
+# a Raspberry Pi the API sits on port 80: "http://192.168.178.76/imswitch/api".
+IMSWITCH_URL = "http://100.112.95.94/imswitch/api"  # remote instance on port 80
+client = imc.ImSwitchClient(IMSWITCH_URL)
 
 # Turn on LED, set to intensity 100
 client.lasersManager.setLaserActive("LED", True)

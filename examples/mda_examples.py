@@ -16,7 +16,9 @@ Requirements:
 import json
 from typing import Dict, Any
 
-hosturl = "100.104.189.88"  # Change to your ImSwitch server address
+# Change to your ImSwitch server, e.g. "http://192.168.178.76/imswitch/api"
+# for a Raspberry Pi behind Caddy (port 80).
+hosturl = "http://100.104.189.88:8001/imswitch/api"
 # Import the imswitchclient
 
 import imswitchclient.ImSwitchClient as imc
@@ -77,7 +79,7 @@ def example_1_simple_xyz_timelapse():
     print()
     
     # Connect to ImSwitch
-    client = imc.ImSwitchClient(host=hosturl, port=8001)
+    client = imc.ImSwitchClient(hosturl)
     
     # Check if MDA is available
     caps = client.mdaController.check_mda_available()
@@ -145,7 +147,7 @@ def example_2_multi_channel_zstack():
     print()
     
     # To execute:
-    client = imc.ImSwitchClient(host=hosturl, port=8001)
+    client = imc.ImSwitchClient(hosturl)
     # result = client.mdaController.run_native_mda_sequence(sequence)
     print("To execute, uncomment: result = client.mdaController.run_native_mda_sequence(sequence)")
     print()
@@ -192,7 +194,7 @@ def example_3_timelapse_with_autofocus():
     print()
     
     # To execute:
-    client = imc.ImSwitchClient(host=hosturl, port=8001)
+    client = imc.ImSwitchClient(hosturl)
     # result = client.mdaController.run_native_mda_sequence(sequence)
 
 
@@ -225,7 +227,7 @@ def example_4_simple_experiment_dict():
     print()
     
     # Connect and execute
-    client = imc.ImSwitchClient(host=hosturl, port=8001)
+    client = imc.ImSwitchClient(hosturl)
     
     # Get preview
     # info = client.mdaController.get_mda_sequence_info(experiment)
@@ -259,7 +261,7 @@ def example_5_monitoring_experiment():
         axis_order="tzc"
     )
     
-    client = imc.ImSwitchClient(host=hosturl, port=8001)
+    client = imc.ImSwitchClient(hosturl)
     
     print("Starting experiment")
     # result = client.mdaController.run_native_mda_sequence(sequence)

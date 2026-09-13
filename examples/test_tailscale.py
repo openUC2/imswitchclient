@@ -6,8 +6,11 @@ import matplotlib.pyplot as plt
 import time
 import imswitchclient.ImSwitchClient as imc
 
-# Initialize the client
-client = imc.ImSwitchClient(host="openuc2-cloud-bed-11647.queue-macaroni.ts.net", isHttps=True, port=443)
+# ImSwitch API endpoint. None uses $IMSWITCH_API_URL (set for notebooks ImSwitch
+# serves itself), else http://localhost:8001/imswitch/api. Behind Caddy/Docker on
+# a Raspberry Pi the API sits on port 80: "http://192.168.178.76/imswitch/api".
+IMSWITCH_URL = "https://openuc2-cloud-bed-11647.queue-macaroni.ts.net/imswitch/api"
+client = imc.ImSwitchClient(IMSWITCH_URL)
 
 # Retrieve positioner names
 positioner_names = client.positionersManager.getAllDeviceNames()

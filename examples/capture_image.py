@@ -4,12 +4,11 @@ import matplotlib.pyplot as plt
 import cv2
 import time
 
-# Connect to ImSwitch
-hostname = "100.112.95.94"  # Change to the hostname of the computer running ImSwitch
-hostname = "192.168.4.1"  # Change to the hostname of the computer running ImSwitch
-port = 80 # docker container on raspi
-isHttps = False
-client = imc.ImSwitchClient(host=hostname, port=port, isHttps=isHttps)
+# ImSwitch API endpoint. None uses $IMSWITCH_API_URL (set for notebooks ImSwitch
+# serves itself), else http://localhost:8001/imswitch/api. Behind Caddy/Docker on
+# a Raspberry Pi the API sits on port 80: "http://192.168.178.76/imswitch/api".
+IMSWITCH_URL = "http://192.168.4.1/imswitch/api"  # docker container on a raspi (port 80)
+client = imc.ImSwitchClient(IMSWITCH_URL)
 
 img = client.recordingManager.snapNumpyToFastAPI()
 
