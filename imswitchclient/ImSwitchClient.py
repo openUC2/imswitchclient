@@ -9,6 +9,7 @@ from .mdaController import mdaController
 from .objectiveController import objectiveController
 from .ledMatrixManager import ledMatrixManager
 from .settingsManager import settingsManager
+from .readnoiseManager import readnoiseManager
 from .viewManager import viewManager
 from .communicationManager import communicationManager
 from .socketClient import socketClient
@@ -33,6 +34,7 @@ class ImSwitchClient(object):
         self.objectiveController = objectiveController(self)
         self.ledMatrixManager = ledMatrixManager(self)
         self.settingsManager = settingsManager(self)
+        self.readnoiseManager = readnoiseManager(self)
         self.viewManager = viewManager(self)
         self.communicationManager = communicationManager(self)
 
@@ -54,19 +56,24 @@ class ImSwitchClient(object):
     def base_swagger_uri(self):
         return self.base_uri.replace("/api", "") + "/openapi.json"
         
-    def get_json(self, path, payload={}, headers={}):
+    def get_json(self, path, payload={}, headers={}, timeout=30):
         """Perform an HTTP GET request and return the JSON response"""
         if not path.startswith("http"):
             path = self.base_uri + path
-        r = requests.get(path, params=payload, headers=headers, verify=False, timeout=1)
+        r = requests.get(path, params=payload, headers=headers, verify=False, timeout=timeout)
         r.raise_for_status()
         return r.json()
 
-    def post_json(self, path, payload={}, headers={}, wait_on_task="auto"):
-        """Make an HTTP POST request and return the JSON response"""
+    def post_json(self, path, payload={}, headers={}, wait_on_task="auto", params=None, timeout=30):
+        """Make an HTTP POST request and return the JSON response.
+
+        `params` goes into the query string: FastAPI puts scalar arguments of a
+        POST endpoint there, only pydantic-model arguments come from the body.
+        """
         if not path.startswith("http"):
             path = self.base_uri + path
-        r = requests.post(path, json=payload, headers=headers, verify=False)
+        r = requests.post(path, json=payload, params=params, headers=headers,
+                          verify=False, timeout=timeout)
         r.raise_for_status()
         r = r.json()
         return r

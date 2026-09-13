@@ -28,22 +28,26 @@ class ImSwitchClient(object):
         if not path.startswith("http"):
             path = self.base_uri + path
         r = requests.get(path)
-        r.raise_for_status()
-        return r.json()
+        # in case of error, return None 
+        
+        if r.status_code != 200:
+            logging.error(f"GET request to {path} failed with status code {r.status_code}: {r.text}")
+            return None
+        else:
+            return r.json()
 
     def post_json(self, path, payload={}, wait_on_task="auto"):
         """Make an HTTP POST request and return the JSON response"""
         if not path.startswith("http"):
             path = self.base_uri + path
         r = requests.post(path, json=payload)
+        
+        if r.status_code != 200:
+            logging.error(f"POST request to {path} with payload {payload} failed with status code {r.status_code}: {r.text}")
+            return None
         r.raise_for_status()
         r = r.json()
-        if wait_on_task == "auto":
-            wait_on_task = is_a_task(r)
-        if wait_on_task:
-            return poll_task(r)
-        else:
-            return r
+        return r
 
     def move_positioner(self, positioner_name, axis, dist, is_absolute=True, is_blocking=True):
         url = f"{self.base_uri}/PositionerController/movePositioner"

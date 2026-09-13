@@ -68,3 +68,25 @@ class settingsManager(object):
             payload['h'] = h
         response = self.parent.get_json(url, payload=payload)
         return response
+    def getDetectorParameters(self):
+        """Short summary (exposure/gain/blacklevel/mode/limits) of the current detector"""
+        url = f"{self.parent.base_uri}/SettingsController/getDetectorParameters"
+        return self.parent.get_json(url)
+
+    def getDetectorParameterTree(self, detector_name=None):
+        """Full camera state as JSON: hardware info + every parameter with type/limits"""
+        url = f"{self.parent.base_uri}/SettingsController/getDetectorParameterTree"
+        payload = {} if detector_name is None else {'detectorName': detector_name}
+        return self.parent.get_json(url, payload=payload)
+
+    def setDetectorParameterValue(self, name, value, detector_name=None):
+        """Set one parameter (any JSON type, cast server-side) and get the refreshed tree back"""
+        url = f"{self.parent.base_uri}/SettingsController/setDetectorParameterValue"
+        payload = {'detectorName': detector_name, 'name': name, 'value': value}
+        return self.parent.post_json(url, payload=payload)
+
+    def getCameraStatus(self, detector_name=None):
+        """Camera status incl. temperature, firmware and current parameter values"""
+        url = f"{self.parent.base_uri}/SettingsController/getCameraStatus"
+        payload = {} if detector_name is None else {'detectorName': detector_name}
+        return self.parent.get_json(url, payload=payload)

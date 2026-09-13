@@ -7,10 +7,9 @@ from setuptools import setup, find_packages
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-with open("HISTORY.rst", "r") as fh:
-    history = fh.read()
 
-requirements = [ "requests", "Pillow", "numpy", "matplotlib", "opencv-python", "python-socketio==5.12.1"]
+
+requirements = [ "requests", "Pillow", "numpy", "matplotlib", "opencv-python", "python-socketio"]
 
 test_requirements = [ ]
 
