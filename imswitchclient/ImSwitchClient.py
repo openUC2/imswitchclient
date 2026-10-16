@@ -14,6 +14,8 @@ from .settingsManager import settingsManager
 from .readnoiseManager import readnoiseManager
 from .viewManager import viewManager
 from .communicationManager import communicationManager
+from .uc2ConfigManager import uc2ConfigManager
+from .liveViewManager import liveViewManager
 from .socketClient import socketClient
 
 DEFAULT_ROUTE = "/imswitch/api"
@@ -86,6 +88,8 @@ class ImSwitchClient(object):
         self.readnoiseManager = readnoiseManager(self)
         self.viewManager = viewManager(self)
         self.communicationManager = communicationManager(self)
+        self.uc2ConfigManager = uc2ConfigManager(self)
+        self.liveViewManager = liveViewManager(self)
 
         # initialize Socket.IO client
         try:

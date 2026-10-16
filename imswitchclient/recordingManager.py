@@ -8,6 +8,8 @@ import cv2
 import threading
 import time
 import enum
+import base64
+import PIL.Image
 
 class SaveFormat(enum.Enum):
     TIFF = 1
@@ -16,6 +18,13 @@ class SaveFormat(enum.Enum):
     MP4 = 4
     PNG = 5
     JPG = 6
+    OME_TIFF = 7
+    OME_ZARR = 8
+    STITCHED_TIFF = 9
+
+def _formatValue(save_format):
+    return save_format.value if isinstance(save_format, SaveFormat) else int(save_format)
+
 
 class MJPEGStreamReceiver:
     def __init__(self, stream_url):
@@ -133,10 +142,118 @@ class recordingManager(object):
         response = self.parent.get_json(url, headers=headers)
         return response
     
-    def snapImageToPath(self, file_name):
-        """Snap image and save to specified path"""
+    def snapImageToPath(self, file_name, save_format=SaveFormat.TIFF, return_preview=False,
+                        preview_max_size=1024, timeout=30):
+        """Snap image and save to specified path.
+
+        Blocks for the whole exposure - use `snapAndWait` for exposures longer
+        than `timeout` seconds.
+        """
         url = f"{self.parent.base_uri}/RecordingController/snapImageToPath"
         headers = {'accept': 'application/json'}
-        payload = {'fileName': file_name}
-        response = self.parent.get_json(url, payload=payload, headers=headers)
+        payload = {'fileName': file_name, 'saveFormat': _formatValue(save_format),
+                   'returnPreview': return_preview, 'previewMaxSize': preview_max_size}
+        response = self.parent.get_json(url, payload=payload, headers=headers, timeout=timeout)
         return response
+
+    # --- background snaps (long exposures) ---------------------------------
+    def startSnap(self, file_name=None, save_format=SaveFormat.TIFF, return_preview=True,
+                  preview_max_size=1024):
+        """Start a snap on the server and return at once with its `jobId`.
+
+        The server arms the camera, waits one full fresh exposure, writes the
+        file under `<dataRoot>/recordings/<date>/` and keeps the result for
+        `getSnapStatus`.
+        """
+        url = f"{self.parent.base_uri}/RecordingController/startSnap"
+        payload = {'saveFormat': _formatValue(save_format), 'returnPreview': return_preview,
+                   'previewMaxSize': preview_max_size}
+        if file_name is not None:
+            payload['fileName'] = file_name
+        return self.parent.get_json(url, payload=payload)
+
+    def getSnapStatus(self, job_id=None):
+        """status (pending/running/done/error/cancelled), progress 0-100, result once done"""
+        url = f"{self.parent.base_uri}/RecordingController/getSnapStatus"
+        payload = {} if job_id is None else {'jobId': job_id}
+        return self.parent.get_json(url, payload=payload)
+
+    def cancelSnap(self, job_id=None):
+        """Abort a running snap; stops the exposure in the camera driver"""
+        url = f"{self.parent.base_uri}/RecordingController/cancelSnap"
+        payload = {} if job_id is None else {'jobId': job_id}
+        return self.parent.get_json(url, payload=payload)
+
+    def snapAndWait(self, file_name=None, save_format=SaveFormat.TIFF, return_preview=True,
+                    preview_max_size=1024, poll=5.0, timeout=None, on_progress=None,
+                    stop_event=None):
+        """`startSnap` + poll until the job finishes; returns the snap result dict.
+
+        The result has `fullPath`, `relativeFilePath` (use with `downloadImage`)
+        and, with `return_preview`, a `previewImage` PNG data URL (decode with
+        `previewToNumpy`). `timeout` in seconds, None waits forever. Interrupting
+        the cell (KeyboardInterrupt), setting the `threading.Event` `stop_event`
+        or hitting the timeout cancels the exposure on the server instead of
+        leaving it running.
+        """
+        job = self.startSnap(file_name, save_format, return_preview, preview_max_size)
+        job_id = job.get('jobId')
+        t0 = time.time()
+        try:
+            while True:
+                status = self.getSnapStatus(job_id)
+                if on_progress:
+                    on_progress(status)
+                state = status.get('status')
+                if state == 'done':
+                    return status.get('result') or {}
+                if state in ('error', 'cancelled', 'unknown'):
+                    raise RuntimeError(f"Snap {job_id} {state}: {status.get('error', '')}")
+                if timeout is not None and time.time() - t0 > timeout:
+                    raise TimeoutError(f"Snap {job_id} exceeded {timeout} s")
+                if stop_event is not None:
+                    if stop_event.wait(poll):
+                        raise InterruptedError(f"Snap {job_id} stopped")
+                else:
+                    time.sleep(poll)
+        except (KeyboardInterrupt, TimeoutError, InterruptedError):
+            self.cancelSnap(job_id)
+            raise
+
+    @staticmethod
+    def previewToNumpy(result):
+        """Decode the `previewImage` data URL of a snap result into an 8-bit array"""
+        data_url = (result or {}).get('previewImage')
+        if not data_url:
+            return None
+        return np.array(PIL.Image.open(io.BytesIO(base64.b64decode(data_url.split(',', 1)[-1]))))
+
+    def dataUrl(self, relative_file_path):
+        """URL of a file below the server's data folder (as `relativeFilePath` reports it)"""
+        return f"{self.parent.base_root_uri}/data/{relative_file_path.lstrip('/')}"
+
+    def downloadFile(self, relative_file_path, target_path=None, timeout=300):
+        """Download a file from the server's data folder; returns the bytes,
+        or `target_path` after writing them there."""
+        response = requests.get(self.dataUrl(relative_file_path), verify=False, timeout=timeout)
+        response.raise_for_status()
+        if target_path is None:
+            return response.content
+        with open(target_path, 'wb') as f:
+            f.write(response.content)
+        return target_path
+
+    def downloadImage(self, relative_file_path, timeout=300):
+        """Download a snapped image at full bit depth as a numpy array.
+
+        Uses `tifffile` when installed (keeps 16-bit and multi-page TIFFs),
+        Pillow otherwise.
+        """
+        content = self.downloadFile(relative_file_path, timeout=timeout)
+        try:
+            import tifffile
+            if relative_file_path.lower().endswith(('.tif', '.tiff')):
+                return tifffile.imread(io.BytesIO(content))
+        except ImportError:
+            pass
+        return np.array(PIL.Image.open(io.BytesIO(content)))

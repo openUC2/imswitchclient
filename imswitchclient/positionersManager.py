@@ -16,7 +16,7 @@ class positionersManager(object):
         if positioner_name is None:
             positioner_name = self.allStageNames[0]
         
-        url = f"{self.parent.base_uri}/PositionerController/stop"
+        url = f"{self.parent.base_uri}/PositionerController/stopAxis"
         payload = {
             'positionerName': positioner_name,
             'axis': axis
@@ -24,15 +24,16 @@ class positionersManager(object):
         response = self.parent.get_json(url, payload=payload)
         return response           
 
-    def movePositionerForever(self, speed=(0, 0, 0, 0), is_stop=False):
+    def movePositionerForever(self, positioner_name=None, axis="X", speed=0, is_stop=False):
         if positioner_name is None:
             positioner_name = self.allStageNames[0]
         
         url = f"{self.parent.base_uri}/PositionerController/movePositionerForever"
         payload = {
             'positionerName': positioner_name,
+            'axis': axis,
             'speed': speed,
-            'isStop': is_stop
+            'is_stop': is_stop
         }
         response = self.parent.get_json(url, payload=payload)
         return response       
@@ -89,3 +90,10 @@ class positionersManager(object):
         }
         response = self.parent.get_json(url, payload=payload)
         return response
+
+    def stopAllAxes(self, positioner_name=None):
+        """Immediately stop every axis of the positioner"""
+        if positioner_name is None:
+            positioner_name = self.allStageNames[0]
+        url = f"{self.parent.base_uri}/PositionerController/stopAllAxes"
+        return self.parent.get_json(url, payload={'positionerName': positioner_name})

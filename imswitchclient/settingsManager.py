@@ -90,3 +90,57 @@ class settingsManager(object):
         url = f"{self.parent.base_uri}/SettingsController/getCameraStatus"
         payload = {} if detector_name is None else {'detectorName': detector_name}
         return self.parent.get_json(url, payload=payload)
+
+    def getDetectorParameter(self, parameter_name, detector_name=None):
+        """Read one parameter live from the camera (e.g. 'temperature', 'exposure', 'gain')"""
+        url = f"{self.parent.base_uri}/SettingsController/getDetectorParameter"
+        payload = {'parameterName': parameter_name}
+        if detector_name is not None:
+            payload['detectorName'] = detector_name
+        return self.parent.get_json(url, payload=payload)
+
+    def setDetectorBlackLevel(self, detector_name, black_level):
+        url = f"{self.parent.base_uri}/SettingsController/setDetectorBlackLevel"
+        payload = {'detectorName': detector_name, 'blackLevel': black_level}
+        return self.parent.get_json(url, payload=payload)
+
+    def setDetectorMode(self, detector_name=None, is_auto=True):
+        """Switch the camera's auto exposure on (`is_auto=True`) or back to manual"""
+        url = f"{self.parent.base_uri}/SettingsController/setDetectorMode"
+        payload = {'isAuto': is_auto}
+        if detector_name is not None:
+            payload['detectorName'] = detector_name
+        return self.parent.get_json(url, payload=payload)
+
+    def setDetectorExposureOnce(self, detector_name=None, reset_delay_ms=1500):
+        """One auto-exposure pass, then back to manual after `reset_delay_ms`.
+
+        Auto exposure converges on streamed frames, so the live view has to
+        run (and the exposure be short) while it does.
+        """
+        url = f"{self.parent.base_uri}/SettingsController/setDetectorExposureOnce"
+        payload = {'resetDelayMs': reset_delay_ms}
+        if detector_name is not None:
+            payload['detectorName'] = detector_name
+        return self.parent.get_json(url, payload=payload)
+
+    def getCameraTemperature(self, detector_name=None):
+        """Sensor temperature and cooler state of a TEC camera, in °C.
+
+        Returns {'temperature', 'target', 'tecOn', 'fanSpeed', 'overTemperature'};
+        a field is None when the camera does not report it.
+        """
+        status = self.getCameraStatus(detector_name)
+        hw = status.get('hardwareParameters') or {}
+        return {
+            'temperature': hw.get('temperature_c'),
+            'target': hw.get('tec_target_c'),
+            'tecOn': hw.get('tec_on'),
+            'fanSpeed': hw.get('fan_speed'),
+            'overTemperature': hw.get('tec_over_temperature'),
+        }
+
+    def setCameraTargetTemperature(self, temperature_c, detector_name=None):
+        """Cooler set point in °C. The camera clamps it to its supported range."""
+        return self.setDetectorParameterValue('target_temperature', temperature_c,
+                                              detector_name=detector_name)
