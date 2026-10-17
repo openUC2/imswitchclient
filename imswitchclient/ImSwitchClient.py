@@ -16,6 +16,7 @@ from .viewManager import viewManager
 from .communicationManager import communicationManager
 from .uc2ConfigManager import uc2ConfigManager
 from .liveViewManager import liveViewManager
+from .autofocusManager import autofocusManager
 from .socketClient import socketClient
 
 DEFAULT_ROUTE = "/imswitch/api"
@@ -90,6 +91,7 @@ class ImSwitchClient(object):
         self.communicationManager = communicationManager(self)
         self.uc2ConfigManager = uc2ConfigManager(self)
         self.liveViewManager = liveViewManager(self)
+        self.autofocusManager = autofocusManager(self)
 
         # initialize Socket.IO client
         try:

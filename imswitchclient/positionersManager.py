@@ -97,3 +97,12 @@ class positionersManager(object):
             positioner_name = self.allStageNames[0]
         url = f"{self.parent.base_uri}/PositionerController/stopAllAxes"
         return self.parent.get_json(url, payload={'positionerName': positioner_name})
+
+    def moveRelativeXY(self, dx, dy, positioner_name=None, is_blocking=True, speed=10000):
+        """Relative X then Y move in µm; zero components are skipped"""
+        if positioner_name is None:
+            positioner_name = self.allStageNames[0]
+        for axis, dist in (("X", dx), ("Y", dy)):
+            if dist:
+                self.movePositioner(positioner_name, axis, dist, is_absolute=False,
+                                    is_blocking=is_blocking, speed=speed)

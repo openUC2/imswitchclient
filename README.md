@@ -136,18 +136,30 @@ The ImSwitch API provides access to various components:
 - `getAllDeviceNames()` - Get all available positioners.
 - `getPositionerPositions()` - Get current position.
 - `movePositioner(name, axis, value, is_absolute, is_blocking)` - Move the stage.
+- `moveRelativeXY(dx, dy, positioner_name, is_blocking, speed)` - Relative X/Y move in µm.
+- `stop(name, axis)` / `stopAllAxes(name)` - Stop one axis / every axis.
 - `homeAxis(name, axis, is_blocking)` - Home the positioner.
 
 ### Lasers Manager
 - `getLaserNames()` - Get available lasers.
 - `setLaserActive(name, status)` - Turn laser on/off.
 - `setLaserValue(name, value)` - Set laser intensity.
+- `getLaserValueRanges(name)` / `getLaserValue(name)` / `getLaserActive(name)` - Read back.
+- `setLaserOn(name, value)` / `setLaserOff(name)` - Value and on/off in one call.
+- `runLaserFor(name, value, duration, on_tick, stop_event)` - Run a PWM channel (pump, valve)
+  for a fixed time; always switched off afterwards, also on errors or interruption.
 
 ### Recording Manager
 - `snapNumpyToFastAPI(resizeFactor)` - Capture an image as numpy array.
 - `startRecording(save_format)` - Begin recording with optional save format (SaveFormat enum).
 - `stopRecording()` - Stop recording.
-- `snapImageToPath(file_name)` - Snap image and save to specified path.
+- `snapImageToPath(file_name, save_format, return_preview)` - Snap image and save to specified path.
+- `snapAndWait(file_name, save_format, poll, timeout, on_progress, stop_event)` - Snap in the
+  background on the server and wait for it. Use for long exposures (minutes to hours); an
+  interrupt, `stop_event` or timeout cancels the exposure on the server.
+- `startSnap(...)` / `getSnapStatus(job_id)` / `cancelSnap(job_id)` - The same, step by step.
+- `previewToNumpy(result)` - 8-bit preview of a snap result as numpy array.
+- `downloadImage(relative_file_path)` / `downloadFile(...)` - Fetch the saved file (full bit depth).
 - `startVideoStream()` - Start MJPEG video stream.
 - `stopVideoStream()` - Stop MJPEG video stream.
 - `getVideoFrame()` - Get current frame from video stream.
@@ -160,6 +172,7 @@ The recording manager supports multiple save formats:
 - `SaveFormat.MP4` - MP4 video format
 - `SaveFormat.PNG` - PNG format
 - `SaveFormat.JPG` - JPEG format
+- `SaveFormat.OME_TIFF`, `SaveFormat.OME_ZARR`, `SaveFormat.STITCHED_TIFF`
 
 ### Settings Manager
 - `getDetectorNames()` - Get available detector names.
@@ -168,6 +181,25 @@ The recording manager supports multiple save formats:
 - `setDetectorGain(detector_name, gain)` - Set detector gain.
 - `setDetectorParameter(detector_name, parameter_name, value)` - Set generic detector parameter.
 - `setDetectorROI(detector_name, x, y, w, h)` - Set detector Region of Interest.
+- `getDetectorParameter(parameter_name, detector_name)` - Read one parameter from the camera.
+- `setDetectorMode(detector_name, is_auto)` / `setDetectorExposureOnce(detector_name)` - Auto exposure.
+- `getCameraTemperature(detector_name)` / `setCameraTargetTemperature(temperature_c)` - Cooled cameras.
+- `getDetectorParameterTree(detector_name)` / `setDetectorParameterValue(name, value)` - Typed access
+  to every camera parameter.
+
+### Live View Manager
+- `startLiveView(detector_name, protocol, params, force)` / `stopLiveView(detector_name)`
+- `getLiveViewActive()`, `getActiveStreams()`, `getLongExposureInfo(detector_name)`
+
+### UC2 Config Manager
+- `getBusStatus()` - CAN-bus power and emergency-stop state.
+- `setBusPower(enable)` / `setBusPowerAndWait(enable, settle)` - Switch the power of all CAN
+  slave boards (motors, LED/laser boards). Raises if the board refuses.
+- `isBoardConnected()`, `getBoardTemperature()`
+
+### Autofocus Manager
+- `autoFocusAndWait(rangez, resolutionz, ...)` - Server-side Z scan around the current focus,
+  waits for the result. `autoFocus`, `getAutofocusStatus`, `stopAutofocus` for manual control.
 
 ### View Manager
 - `setLiveViewActive(active)` - Enable/disable live view.
@@ -181,6 +213,30 @@ The recording manager supports multiple save formats:
 - `setIntensity(intensity)` - Set LED intensity.
 - `setLED(led_id, state)` - Set specific LED with ID and state.
 - `setSpecial(pattern, intensity, get_return)` - Set special LED pattern.
+
+### Smart microscopy helpers (`imswitchclient.smart`)
+Building blocks for closed-loop experiments; they work on numpy frames and plain callables and are
+tested without a microscope (`tests/test_smart.py`).
+
+```python
+from imswitchclient import smart
+snap = smart.make_snap(client)                    # -> float32 frame
+move = smart.make_relative_mover(client)          # move(dx_um, dy_um), blocking
+
+cal = smart.StageCameraCalibration.measure(snap, move, step_um=50)
+obj = smart.find_objects(snap())[0]               # largest blob
+move(*cal.move_to_center(*obj["offset"]))         # centre it - rotation and flips included
+```
+
+- `StageCameraCalibration` - pixel offsets <-> stage moves, measured on the live images.
+- `phase_correlate(a, b)` - sub-pixel image shift.
+- `find_objects(frame)` / `foreground_mask(frame)` - blob detection.
+- `EmptyFieldReference(empty_frame).coverage(frame)` - how much of a field is sample (0..1).
+- `SafetyBox` - limits closed-loop moves to a square around the start.
+- `Mosaic(frames, positions, cal)` - quick overview of frames placed by stage position.
+
+The ImSwitch notebooks `ImSwitch_Smart_ObjectTracking`, `ImSwitch_Smart_PathFollowing` and
+`ImSwitch_Smart_AdaptiveImaging` show them in use.
 
 ### Communication Manager
 - `acquireImage()` - Acquire an image through communication channel.
