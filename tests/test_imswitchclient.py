@@ -32,6 +32,7 @@ class Recorder:
     def __init__(self):
         self.calls = []
         self.answers = {}
+        self.timeouts = {}          # endpoint -> timeout of its last request
 
     def _answer(self, method, path, params, body):
         endpoint = path.replace(BASE + "/", "")
@@ -40,6 +41,7 @@ class Recorder:
         return answer(params) if callable(answer) else answer
 
     def get_json(self, path, payload={}, headers={}, timeout=30):
+        self.timeouts[path.replace(BASE + "/", "")] = timeout
         return self._answer("GET", path, payload, None)
 
     def post_json(self, path, payload={}, headers={}, wait_on_task="auto",
@@ -82,6 +84,50 @@ class TestPositioners(unittest.TestCase):
         client, rec = make_client()
         client.positionersManager.stopAllAxes()
         self.assertIn("PositionerController/stopAllAxes", rec.endpoints())
+
+
+class TestMoveTimeouts(unittest.TestCase):
+    MOVE = "PositionerController/movePositioner"
+    POS = "PositionerController/getPositionerPositions"
+
+    def test_blocking_moves_get_a_long_timeout(self):
+        client, rec = make_client()
+        client.positionersManager.movePositioner(None, "Y", 0, is_blocking=True)
+        self.assertEqual(rec.timeouts[self.MOVE], 300)
+        client.positionersManager.movePositioner(None, "Y", 0, is_blocking=False)
+        self.assertEqual(rec.timeouts[self.MOVE], 30)
+
+    def test_move_absolute_xy_scales_timeout_with_travel(self):
+        # the failure seen in the field: 165 mm of Y travel at 5000 µm/s
+        client, rec = make_client()
+        readings = iter([{"X": 47384.7, "Y": 164588.1}, {"X": 0.0, "Y": 120000.0},
+                         {"X": 0.0, "Y": 2.0}])
+        rec.answers[self.POS] = lambda p: {"ESP32Stage": next(readings)}
+        pos = client.positionersManager.moveAbsoluteXY(0, 0, speed=5000, poll=0)
+        self.assertEqual(pos["Y"], 2.0)
+        self.assertGreater(rec.timeouts[self.MOVE], 2 * 164588 / 5000)
+        moves = [c[2] for c in rec.calls if c[1] == self.MOVE]
+        self.assertEqual([(m["axis"], m["dist"], m["isAbsolute"]) for m in moves],
+                         [("X", 0, True), ("Y", 0, True)])
+
+    def test_move_absolute_xy_survives_a_request_timeout(self):
+        import requests
+        client, rec = make_client()
+        readings = iter([{"X": 0.0, "Y": 0.0}, {"X": 500.0, "Y": 0.0}, {"X": 1000.0, "Y": 0.0}])
+        rec.answers[self.POS] = lambda p: {"ESP32Stage": next(readings)}
+
+        def slow(_params):
+            raise requests.exceptions.ReadTimeout("still moving")
+
+        rec.answers[self.MOVE] = slow
+        pos = client.positionersManager.moveAbsoluteXY(1000, 0, poll=0)
+        self.assertEqual(pos["X"], 1000.0)
+
+    def test_move_absolute_xy_reports_a_stage_that_never_arrives(self):
+        client, rec = make_client()
+        rec.answers[self.POS] = {"ESP32Stage": {"X": 0.0, "Y": 0.0}}
+        with self.assertRaisesRegex(TimeoutError, "X=0.0 Y=0.0"):
+            client.positionersManager.moveAbsoluteXY(1000, 0, timeout=0.05, poll=0.01)
 
 
 class TestLasers(unittest.TestCase):
